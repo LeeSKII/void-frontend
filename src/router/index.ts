@@ -14,6 +14,14 @@ const routes: any[] = [
     component: () => import("@/views/mobile-pages/HomePage.vue"),
     children: mobileRoutes,
   },
+  {
+    path: "/:pathMatch(.*)*",
+    name: "NotFound",
+    component: () => import("@/views/pages/NotFoundPage.vue"),
+    meta: {
+      title: "404 - 页面未找到"
+    }
+  }
 ];
 
 const router = VueRouter.createRouter({
