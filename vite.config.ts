@@ -4,6 +4,7 @@ import { NaiveUiResolver } from "unplugin-vue-components/resolvers";
 import Components from "unplugin-vue-components/vite";
 // vite.config.ts
 import { defineConfig } from "vite";
+import { resolve } from "path";
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -26,4 +27,9 @@ export default defineConfig({
       resolvers: [NaiveUiResolver()],
     }),
   ],
+  resolve: {
+    alias: {
+      "@": resolve(__dirname, "src"),
+    },
+  },
 });
