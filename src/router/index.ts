@@ -11,13 +11,13 @@ const routes: any[] = [
   { path: "/home", component: () => import("@/views/pages/HomePage.vue") },
   {
     path: "/mobile",
-    component: () => import("@/views/mobile-pages/HomePage.vue"), // 使用现有的移动端首页作为布局
+    component: () => import("@/views/mobile-pages/HomePage.vue"),
     children: mobileRoutes,
   },
 ];
 
 const router = VueRouter.createRouter({
-  history: VueRouter.createWebHashHistory("/v3printer"),
+  history: VueRouter.createWebHashHistory("/void-frontend"),
   routes,
 });
 
