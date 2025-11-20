@@ -7,6 +7,73 @@
 
 项目基于 Vue3、Vite、TypeScript 以及 UI 库 Naive UI 进行开发，主要用于管理云枢自定义项目的前端部分。
 
+## 开发约定
+
+### 核心原则
+
+- **文档注释优先**：功能上线后必须添加注释，使用 JSDoc 格式
+- **AI 自动编码优先**：优先使用 GLM4.5 及以上能力 AI 自动化编码
+- **高内聚低耦合**：非必要严禁抽象封装，单文件为隔离整体环境
+- **语义化命名**：禁止使用拼音缩写，变量名、函数名、文件名必须有意义，使用英文单词，除非极端情况下允许使用拼音缩写
+- **AI 审核优先**：代码提交前必须经过 AI 审核，确保满足 README 中要求的规范
+
+### 代码组织约定
+
+- **目录结构**：遵循项目预设的目录结构，不得随意更改
+- **文件命名**：
+  - 组件文件使用 PascalCase（如 `UserProfile.vue`）
+  - 工具文件使用 camelCase（如 `apiHelper.ts`）
+  - 类型定义文件使用 `.d.ts` 后缀（如 `types.d.ts`）
+- **导入顺序**：
+  1. Vue 相关导入
+  2. 第三方库导入
+  3. 本地组件/工具导入
+  4. 类型定义导入
+
+### 组件开发约定
+
+- **组件结构**：按照 `<template>` -> `<script setup>` -> `<style scoped>` 顺序组织
+- **Props 定义**：必须定义类型和默认值，使用 TypeScript 接口
+- **事件命名**：使用 kebab-case，如 `@update-value`
+- **组件大小**：单个组件文件不超过 500 行，超过则考虑拆分
+
+### 状态管理约定
+
+- **本地状态**：优先使用 `ref`，避免使用 `reactive`
+- **全局状态**：使用 Pinia，按功能模块划分 store
+- **状态命名**：使用描述性名称，避免缩写
+
+### 样式约定
+
+- **样式语言**：只允许使用原生 CSS
+- **作用域**：组件样式必须使用 `scoped` 或 CSS Modules
+- **命名规范**：使用 BEM 命名规范或 kebab-case
+- **响应式设计**：移动端优先，使用媒体查询适配不同屏幕
+
+### 性能优化约定
+
+- **懒加载**：路由和组件使用动态导入
+- **图片优化**：使用适当格式和尺寸，考虑使用 WebP
+- **代码分割**：按页面或功能模块进行代码分割
+
+### 安全约定
+
+- **XSS 防护**：避免直接使用 `v-html`，必须使用时确保内容已过滤
+- **敏感信息**：不得在前端代码中硬编码密钥、密码等敏感信息
+- **API 调用**：使用 HTTPS，验证输入数据
+
+### Git 提交约定
+
+- **提交格式**：遵循 Conventional Commits 规范
+- **提交频率**：完成一个功能点或修复一个 bug 后立即提交
+- **分支管理**：功能开发使用 feature 分支，修复使用 hotfix 分支
+
+### 代码审查约定
+
+- **自检**：提交前必须进行代码自检，确保符合规范
+- **审查重点**：代码逻辑、性能、安全性、可维护性
+- **反馈处理**：及时响应审查意见，必要时进行修改
+
 ## ✨ 特性
 
 - 🚀 **现代化技术栈**：使用 Vue 3 Composition API、TypeScript 和 Vite 构建
@@ -101,9 +168,9 @@ void-frontend/
 
 ### 页面结构说明
 
-项目采用PC端和移动端分离的页面结构设计：
+项目采用 PC 端和移动端分离的页面结构设计：
 
-- **PC端页面**：存放在 [`src/views/pages/`](src/views/pages/) 目录下，适用于桌面设备浏览
+- **PC 端页面**：存放在 [`src/views/pages/`](src/views/pages/) 目录下，适用于桌面设备浏览
 - **移动端页面**：存放在 [`src/views/mobile-pages/`](src/views/mobile-pages/) 目录下，适用于移动设备浏览
 
 ### 路由配置
@@ -112,15 +179,15 @@ void-frontend/
 
 #### 路由结构
 
-- **PC端路由**：直接访问页面组件，如 `/home` 对应PC端首页
+- **PC 端路由**：直接访问页面组件，如 `/home` 对应 PC 端首页
 - **移动端路由**：使用嵌套路由结构，主路径为 `/mobile`，子路由如 `/mobile/home` 对应移动端首页
-- **404页面**：使用通配符路由 `/:pathMatch(.*)*` 处理未匹配的路径
+- **404 页面**：使用通配符路由 `/:pathMatch(.*)*` 处理未匹配的路径
 
 #### 路由特性
 
-- 使用 [`createWebHashHistory`](src/router/index.ts:28) 创建基于hash的路由模式，基础路径为 `/void-frontend`
+- 使用 [`createWebHashHistory`](src/router/index.ts:28) 创建基于 hash 的路由模式，基础路径为 `/void-frontend`
 - 配置了全局前置守卫，自动设置页面标题（通过 [`meta.title`](src/router/index.ts:22) 属性）
-- 404页面智能判断来源，提供返回首页和返回上页功能
+- 404 页面智能判断来源，提供返回首页和返回上页功能
 
 ## 📋 开发规范
 
@@ -203,11 +270,191 @@ const getUserInfo = (userId: string) => {
 </template>
 ```
 
+### TypeScript 类型定义规范
+
+- 优先使用 `interface` 定义对象类型
+- 使用 `type` 定义联合类型、交叉类型等复杂类型
+- 类型命名使用 PascalCase，并以 `T` 或 `I` 开头（可选）
+
+```typescript
+// 用户信息接口
+interface UserInfo {
+  id: string;
+  name: string;
+  email: string;
+  avatar?: string;
+}
+
+// API 响应类型
+type ApiResponse<T> = {
+  code: number;
+  message: string;
+  data: T;
+};
+
+// 组件 Props 类型
+interface UserCardProps {
+  userInfo: UserInfo;
+  showDetails?: boolean;
+  onUpdate?: (user: UserInfo) => void;
+}
+```
+
+### 组件开发最佳实践
+
+- **组件结构**：保持单一职责原则，一个组件只做一件事
+- **Props 验证**：使用 TypeScript 定义 Props 类型，提供默认值
+- **事件处理**：使用描述性的事件名称，避免使用通用名称
+
+```vue
+<template>
+  <div class="user-card">
+    <n-avatar :src="userInfo.avatar" :size="avatarSize" />
+    <div class="user-info">
+      <h3>{{ userInfo.name }}</h3>
+      <p>{{ userInfo.email }}</p>
+      <n-button v-if="showDetails" @click="handleViewDetails" type="primary">
+        查看详情
+      </n-button>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { computed } from "vue";
+
+interface Props {
+  userInfo: UserInfo;
+  showDetails?: boolean;
+  size?: "small" | "medium" | "large";
+}
+
+interface Emits {
+  (e: "view-details", user: UserInfo): void;
+  (e: "update-user", user: UserInfo): void;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  showDetails: false,
+  size: "medium",
+});
+
+const emit = defineEmits<Emits>();
+
+const avatarSize = computed(() => {
+  const sizeMap = {
+    small: 32,
+    medium: 48,
+    large: 64,
+  };
+  return sizeMap[props.size];
+});
+
+const handleViewDetails = () => {
+  emit("view-details", props.userInfo);
+};
+</script>
+
+<style scoped>
+.user-card {
+  display: flex;
+  align-items: center;
+  padding: 16px;
+  border-radius: 8px;
+  background-color: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.user-info {
+  margin-left: 16px;
+}
+
+.user-info h3 {
+  margin: 0 0 4px 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.user-info p {
+  margin: 0;
+  color: #666;
+  font-size: 14px;
+}
+</style>
+```
+
+### 错误处理规范
+
+- **统一错误处理**：创建全局错误处理函数
+- **用户友好提示**：使用 Naive UI 的 message 组件显示错误信息
+- **错误日志**：记录错误信息到控制台，便于调试
+
+```typescript
+// utils/errorHandler.ts
+import { useMessage } from "naive-ui";
+
+const message = useMessage();
+
+/**
+ * 统一错误处理函数
+ * @param error 错误对象
+ * @param defaultMessage 默认错误消息
+ */
+export const handleError = (error: any, defaultMessage = "操作失败") => {
+  console.error("Error:", error);
+
+  // 根据错误类型显示不同的提示
+  if (error.response) {
+    // API 请求错误
+    const status = error.response.status;
+    const message = error.response.data?.message || defaultMessage;
+
+    switch (status) {
+      case 400:
+        message.error(`请求参数错误: ${message}`);
+        break;
+      case 401:
+        message.error("未授权，请重新登录");
+        break;
+      case 403:
+        message.error("拒绝访问");
+        break;
+      case 404:
+        message.error("请求的资源不存在");
+        break;
+      case 500:
+        message.error("服务器内部错误");
+        break;
+      default:
+        message.error(message);
+    }
+  } else if (error.request) {
+    // 网络错误
+    message.error("网络连接失败，请检查网络设置");
+  } else {
+    // 其他错误
+    message.error(error.message || defaultMessage);
+  }
+};
+
+// 在组件中使用
+import { handleError } from "@/utils/errorHandler";
+
+const submitForm = async () => {
+  try {
+    await userApi.login(formData);
+    message.success("登录成功");
+  } catch (error) {
+    handleError(error, "登录失败，请检查用户名和密码");
+  }
+};
+```
+
 ### 路由规范
 
 - 使用嵌套路由结构
 - 路由命名使用 kebab-case
-- PC端页面组件放在 [`src/views/pages/`](src/views/pages/) 目录下
+- PC 端页面组件放在 [`src/views/pages/`](src/views/pages/) 目录下
 - 移动端页面组件放在 [`src/views/mobile-pages/`](src/views/mobile-pages/) 目录下
 - 移动端路由使用 `/mobile` 作为基础路径，子路由使用嵌套结构
 
@@ -235,11 +482,12 @@ const mobileRoutes = [
 ];
 ```
 
-### PC端与移动端页面开发规范
+### PC 端与移动端页面开发规范
 
 #### 页面结构规范
 
-- **PC端页面**：存放在 [`src/views/pages/`](src/views/pages/) 目录下
+- **PC 端页面**：存放在 [`src/views/pages/`](src/views/pages/) 目录下
+
   - 适用于桌面设备（宽度 ≥ 768px）
   - 可使用更复杂的布局和交互
   - 可展示更多信息和功能
@@ -274,72 +522,32 @@ const mobileRoutes = [
 
 #### 路由导航规范
 
-- PC端和移动端页面可能需要不同的导航逻辑
-- 404页面会根据当前路径智能判断返回对应的首页
+- PC 端和移动端页面可能需要不同的导航逻辑
+- 404 页面会根据当前路径智能判断返回对应的首页
 - 使用 [`router.push()`](src/router/index.ts:37) 进行程序化导航
 
 ```typescript
 // 导航示例
 const navigateToHome = () => {
   // 判断当前设备类型或路径
-  if (isMobile || window.location.hash.includes('/mobile')) {
-    router.push('/mobile/home');
+  if (isMobile || window.location.hash.includes("/mobile")) {
+    router.push("/mobile/home");
   } else {
-    router.push('/home');
+    router.push("/home");
   }
 };
 ```
 
 ### 状态管理规范
 
-- 使用 Pinia 进行状态管理
-- Store 文件放在 `stores` 目录下
-- 使用 TypeScript 定义状态类型
-
-```typescript
-// stores/user.ts
-interface UserState {
-  userInfo: UserInfo | null;
-  isLoggedIn: boolean;
-}
-
-export const useUserStore = defineStore("user", {
-  state: (): UserState => ({
-    userInfo: null,
-    isLoggedIn: false,
-  }),
-  actions: {
-    async login(credentials: LoginCredentials) {
-      // 登录逻辑
-    },
-  },
-});
-```
+- 项目整体暂时无全局变量控制
+- 状态隔离环境为单文件级别
 
 ### 接口规范
 
-- API 请求使用统一的请求封装
-- 接口定义放在 `api` 目录下
-- 使用 TypeScript 定义接口类型
-
-```typescript
-// api/user.ts
-interface LoginRequest {
-  username: string;
-  password: string;
-}
-
-interface LoginResponse {
-  token: string;
-  userInfo: UserInfo;
-}
-
-export const userApi = {
-  login: (data: LoginRequest): Promise<LoginResponse> => {
-    return request.post("/auth/login", data);
-  },
-};
-```
+- API 请求统一使用 axios 库
+- 因为不同接口之间的共识性未达成，暂不予封装统一 API 访问接口层
+- 使用 TypeScript 定义接口出入参类型
 
 ### 错误处理规范
 
@@ -360,6 +568,77 @@ try {
 } catch (error) {
   handleError(error);
 }
+```
+
+### 测试规范
+
+代码质量由 AI 审核控制，为了精简和提高迭代速度，不做代码规范约束。
+
+### 性能优化规范
+
+- **组件懒加载**：使用动态导入实现组件懒加载
+- **虚拟滚动**：处理大量数据时使用虚拟滚动
+- **防抖与节流**：对频繁触发的事件使用防抖或节流
+- **图片优化**：使用适当的图片格式和尺寸，考虑懒加载
+
+```typescript
+// 路由懒加载示例
+const routes = [
+  {
+    path: "/user-profile",
+    component: () => import("@/views/pages/UserProfile.vue")
+  }
+];
+
+// 组件懒加载示例
+const HeavyComponent = defineAsyncComponent(() =>
+  import("@/components/HeavyComponent.vue")
+);
+
+// 防抖示例
+import { debounce } from "lodash-es";
+
+const searchUsers = debounce(async (query: string) => {
+  if (!query.trim()) return;
+
+  try {
+    const results = await userApi.search(query);
+    searchResults.value = results;
+  } catch (error) {
+    handleError(error, "搜索用户失败");
+  }
+}, 300);
+
+// 图片懒加载示例
+<template>
+  <img
+    v-lazy="imageUrl"
+    :alt="imageAlt"
+    class="lazy-image"
+  />
+</template>
+```
+
+### 安全规范
+
+- **XSS 防护**：避免直接使用 `v-html`，必须使用时确保内容已过滤
+- **敏感信息**：不得在前端代码中硬编码密钥、密码等敏感信息
+- **输入验证**：对所有用户输入进行验证和清理
+
+```typescript
+// XSS 防护示例
+import { DOMPurify } from "dompurify";
+
+// 安全地渲染 HTML 内容
+const sanitizedHtml = computed(() => {
+  return DOMPurify.sanitize(userInput.value);
+});
+
+// 输入验证示例
+const validateEmail = (email: string): boolean => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+};
 ```
 
 ## 🔄 自动导入
@@ -436,10 +715,42 @@ const showMessage = () => {
 
 ## 🚫 禁止事项
 
+### 依赖使用禁止事项
+
 - 不得使用任何除项目引用的第三方库，例如 jQuery、Lodash 等
 - 不得使用任何除项目引用的第三方 UI 库，例如 Ant Design、Element UI 等
+- 不得随意添加新的依赖，必须经过团队评估和批准
+- 不得使用已废弃或有安全漏洞的依赖包
+
+### 代码编写禁止事项
+
 - 不得在组件中使用全局样式，应使用 scoped 样式或 CSS Modules
 - 不得直接修改 props，应使用 emit 向父组件传递事件
+- 不得使用 `any` 类型，必须明确指定类型
+- 不得使用 `eval()` 或 `Function()` 构造函数等危险函数
+- 不得在模板中编写复杂逻辑，应将逻辑移至计算属性或方法
+- 不得使用硬编码的魔法数字或字符串，应定义为常量
+
+### 性能相关禁止事项
+
+- 不得在组件中创建不必要的响应式数据
+- 不得在循环或高频事件中创建新对象或函数
+- 不得忽略内存泄漏问题，如未清理的定时器、事件监听器等
+- 不得在生产环境中保留 console.log、debugger 等调试代码
+
+### 安全相关禁止事项
+
+- 不得在前端代码中硬编码密钥、密码、API 密钥等敏感信息
+- 不得直接使用用户输入进行 DOM 操作，必须先进行验证和转义
+- 不得忽略 HTTPS 证书验证
+- 不得在 URL 中传递敏感信息
+
+### Git 相关禁止事项
+
+- 不得将 `.env`、`.env.local` 等包含敏感信息的文件提交到版本控制
+- 不得提交 node_modules、dist、.DS_Store 等无需版本控制的文件
+- 不得提交包含个人信息的代码或配置
+- 不得在提交信息中包含敏感信息或不当内容
 
 ## 🚀 部署指南
 
@@ -473,14 +784,6 @@ server {
   }
 }
 ```
-
-## 🤝 贡献指南
-
-1. Fork 本仓库
-2. 创建特性分支：`git checkout -b feature/AmazingFeature`
-3. 提交更改：`git commit -m 'Add some AmazingFeature'`
-4. 推送到分支：`git push origin feature/AmazingFeature`
-5. 提交 Pull Request
 
 ### 提交规范
 
@@ -516,18 +819,19 @@ A: 直接在模板中使用组件，会自动导入。例如使用 `<n-card>` �
 
 ### Q: 如何添加新的页面路由？
 
-A: 1. 在对应的views目录下创建页面组件（PC端放在 `src/views/pages/`，移动端放在 `src/views/mobile-pages/`）2. 在 [`src/router/index.ts`](src/router/index.ts:1) 中添加路由规则 3. 使用 `<router-link>` 或 `router.push()` 进行导航
+A: 1. 在对应的 views 目录下创建页面组件（PC 端放在 `src/views/pages/`，移动端放在 `src/views/mobile-pages/`）2. 在 [`src/router/index.ts`](src/router/index.ts:1) 中添加路由规则 3. 使用 `<router-link>` 或 `router.push()` 进行导航
 
-### Q: 如何区分PC端和移动端页面？
+### Q: 如何区分 PC 端和移动端页面？
 
-A: 项目采用目录结构区分PC端和移动端页面：
-- PC端页面存放在 [`src/views/pages/`](src/views/pages/) 目录下
+A: 项目采用目录结构区分 PC 端和移动端页面：
+
+- PC 端页面存放在 [`src/views/pages/`](src/views/pages/) 目录下
 - 移动端页面存放在 [`src/views/mobile-pages/`](src/views/mobile-pages/) 目录下
 - 移动端路由使用 `/mobile` 作为基础路径
 
-### Q: 如何实现PC端和移动端的响应式设计？
+### Q: 如何实现 PC 端和移动端的响应式设计？
 
-A: 1. 使用CSS媒体查询实现不同屏幕尺寸的样式适配 2. 推荐使用768px作为PC端和移动端的分界点 3. 移动端优先考虑垂直布局和触摸操作优化
+A: 1. 使用 CSS 媒体查询实现不同屏幕尺寸的样式适配 2. 推荐使用 768px 作为 PC 端和移动端的分界点 3. 移动端优先考虑垂直布局和触摸操作优化
 
 ```css
 /* 响应式设计示例 */
@@ -546,9 +850,9 @@ A: 1. 使用CSS媒体查询实现不同屏幕尺寸的样式适配 2. 推荐使�
 }
 ```
 
-### Q: 如何在PC端和移动端之间共享组件？
+### Q: 如何在 PC 端和移动端之间共享组件？
 
-A: 可以将共享组件放在 [`src/components/`](src/components/) 目录下，然后在PC端和移动端页面中分别导入使用：
+A: 可以将共享组件放在 [`src/components/`](src/components/) 目录下，然后在 PC 端和移动端页面中分别导入使用：
 
 ```vue
 <!-- PC端页面 src/views/pages/HomePage.vue -->
@@ -568,7 +872,7 @@ A: 可以将共享组件放在 [`src/components/`](src/components/) 目录下，
 </template>
 
 <script setup>
-import SharedComponent from '@/components/SharedComponent.vue';
+import SharedComponent from "@/components/SharedComponent.vue";
 </script>
 ```
 
