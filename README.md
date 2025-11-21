@@ -147,18 +147,24 @@ void-frontend/
 │   ├── composables/       # 组合式函数
 │   ├── router/            # 路由配置
 │   │   └── index.ts       # 路由定义文件
+│   ├── utils/             # 工具函数
+│   │   └── dingtalk.ts    # 钉钉相关工具
 │   ├── views/             # 页面组件
 │   │   ├── pages/         # PC端页面
 │   │   │   ├── HomePage.vue      # PC端首页
-│   │   │   └── NotFoundPage.vue  # 404页面
+│   │   │   ├── NotFoundPage.vue  # 404页面
+│   │   │   └── sso/              # SSO单点登录相关页面
+│   │   │       └── SSOPage.vue   # SSO登录页面
 │   │   └── mobile-pages/  # 移动端页面
 │   │       └── HomePage.vue      # 移动端首页
 │   ├── App.vue            # 根组件
 │   ├── main.ts            # 应用入口文件
 │   └── style.css          # 全局样式
+├── .env.example           # 环境变量示例文件
 ├── .gitignore             # Git 忽略文件
 ├── index.html             # HTML 模板
 ├── package.json           # 项目配置和依赖
+├── package-lock.json      # 依赖锁定文件
 ├── README.md              # 项目文档
 ├── tsconfig.app.json      # TypeScript 应用配置
 ├── tsconfig.json          # TypeScript 基础配置
