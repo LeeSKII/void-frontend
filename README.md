@@ -276,6 +276,340 @@ const getUserInfo = (userId: string) => {
 </template>
 ```
 
+### Vue 组件注释规范
+
+为了提高代码可读性和维护性，所有 Vue 组件都应遵循以下注释规范：
+
+#### 组件顶部注释
+
+每个 Vue 组件文件都应在顶部添加组件描述注释：
+
+```vue
+<!--
+  @component 组件名称
+  @description 组件功能描述
+  @author 开发者名称（可选）
+  @since 创建日期（可选）
+  @example 使用示例（可选）
+-->
+<template>
+  <!-- 组件模板内容 -->
+</template>
+```
+
+#### 完整组件注释示例
+
+以下是一个完整的 Vue 组件注释示例：
+
+```vue
+<!--
+  @component UserCard
+  @description 用户卡片组件，用于展示用户基本信息和操作按钮
+  @author 开发团队
+  @since 2023-11-21
+  @example
+  <UserCard
+    :user-info="userData"
+    :show-details="true"
+    @update-user="handleUserUpdate"
+  />
+-->
+<template>
+  <div class="user-card">
+    <!-- 用户头像区域 -->
+    <div class="avatar-section">
+      <n-avatar
+        :src="userInfo.avatar"
+        :size="avatarSize"
+        fallback-src="/default-avatar.png"
+      />
+    </div>
+    
+    <!-- 用户信息区域 -->
+    <div class="info-section">
+      <h3 class="user-name">{{ userInfo.name }}</h3>
+      <p class="user-email">{{ userInfo.email }}</p>
+      <p class="user-department" v-if="userInfo.department">
+        {{ userInfo.department }}
+      </p>
+    </div>
+    
+    <!-- 操作按钮区域 -->
+    <div class="action-section" v-if="showActions">
+      <n-space>
+        <n-button
+          v-if="showDetails"
+          @click="handleViewDetails"
+          type="primary"
+          size="small"
+        >
+          查看详情
+        </n-button>
+        <n-button
+          @click="handleEdit"
+          type="tertiary"
+          size="small"
+        >
+          编辑
+        </n-button>
+      </n-space>
+    </div>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { computed, ref } from "vue";
+
+/**
+ * 用户信息接口定义
+ */
+interface UserInfo {
+  /** 用户唯一标识 */
+  id: string;
+  /** 用户姓名 */
+  name: string;
+  /** 用户邮箱 */
+  email: string;
+  /** 用户头像URL */
+  avatar?: string;
+  /** 用户部门 */
+  department?: string;
+  /** 用户角色 */
+  role?: string;
+}
+
+/**
+ * 组件属性接口定义
+ */
+interface Props {
+  /** 用户信息对象 */
+  userInfo: UserInfo;
+  /** 是否显示详情按钮 */
+  showDetails?: boolean;
+  /** 是否显示操作按钮区域 */
+  showActions?: boolean;
+  /** 头像尺寸 */
+  size?: "small" | "medium" | "large";
+}
+
+/**
+ * 组件事件接口定义
+ */
+interface Emits {
+  /** 查看详情事件 */
+  (e: "view-details", user: UserInfo): void;
+  /** 编辑用户事件 */
+  (e: "edit-user", user: UserInfo): void;
+  /** 更新用户事件 */
+  (e: "update-user", user: UserInfo): void;
+}
+
+// 组件属性定义，设置默认值
+const props = withDefaults(defineProps<Props>(), {
+  showDetails: false,
+  showActions: true,
+  size: "medium",
+});
+
+// 组件事件定义
+const emit = defineEmits<Emits>();
+
+// 内部状态
+const isLoading = ref(false);
+
+/**
+ * 计算头像尺寸
+ * @returns {number} 头像像素大小
+ */
+const avatarSize = computed(() => {
+  const sizeMap = {
+    small: 32,
+    medium: 48,
+    large: 64,
+  };
+  return sizeMap[props.size];
+});
+
+/**
+ * 处理查看详情按钮点击事件
+ * 触发 view-details 事件并传递用户信息
+ */
+const handleViewDetails = () => {
+  emit("view-details", props.userInfo);
+};
+
+/**
+ * 处理编辑按钮点击事件
+ * 触发 edit-user 事件并传递用户信息
+ */
+const handleEdit = () => {
+  emit("edit-user", props.userInfo);
+};
+
+/**
+ * 异步加载用户详细信息
+ * @param userId 用户ID
+ * @returns Promise<UserInfo> 用户详细信息
+ */
+const loadUserDetails = async (userId: string): Promise<UserInfo> => {
+  try {
+    isLoading.value = true;
+    // 这里应该是实际的API调用
+    const response = await fetch(`/api/users/${userId}`);
+    const userData = await response.json();
+    return userData;
+  } catch (error) {
+    console.error("加载用户详情失败:", error);
+    throw error;
+  } finally {
+    isLoading.value = false;
+  }
+};
+</script>
+
+<style scoped>
+/* 组件样式 */
+.user-card {
+  display: flex;
+  align-items: center;
+  padding: 16px;
+  border-radius: 8px;
+  background-color: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease;
+}
+
+.user-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.avatar-section {
+  flex-shrink: 0;
+  margin-right: 16px;
+}
+
+.info-section {
+  flex: 1;
+  min-width: 0;
+}
+
+.user-name {
+  margin: 0 0 4px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.user-email {
+  margin: 0 0 4px 0;
+  font-size: 14px;
+  color: #666;
+}
+
+.user-department {
+  margin: 0;
+  font-size: 12px;
+  color: #999;
+}
+
+.action-section {
+  flex-shrink: 0;
+  margin-left: 16px;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .user-card {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .avatar-section {
+    margin-right: 0;
+    margin-bottom: 12px;
+  }
+  
+  .action-section {
+    margin-left: 0;
+    margin-top: 12px;
+  }
+}
+</style>
+```
+
+#### 简单组件注释示例
+
+对于简单的组件，可以使用更简洁的注释：
+
+```vue
+<!--
+  @component LoadingSpinner
+  @description 加载中动画组件，显示旋转的加载指示器
+-->
+<template>
+  <div class="loading-container">
+    <div class="spinner"></div>
+    <p v-if="showText" class="loading-text">{{ text }}</p>
+  </div>
+</template>
+
+<script setup lang="ts">
+interface Props {
+  /** 是否显示加载文本 */
+  showText?: boolean;
+  /** 加载文本内容 */
+  text?: string;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  showText: true,
+  text: "加载中...",
+});
+</script>
+
+<style scoped>
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.spinner {
+  width: 24px;
+  height: 24px;
+  border: 2px solid #f3f3f3;
+  border-top: 2px solid #3498db;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.loading-text {
+  margin-top: 12px;
+  color: #666;
+  font-size: 14px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+</style>
+```
+
+#### 注释要点总结
+
+1. **组件顶部注释**：使用 HTML 注释格式，包含组件名称、描述等信息
+2. **接口注释**：为 TypeScript 接口添加 JSDoc 注释，说明每个属性的用途
+3. **函数注释**：为所有函数添加 JSDoc 注释，说明功能、参数和返回值
+4. **复杂逻辑注释**：在复杂的业务逻辑处添加行内注释
+5. **模板注释**：在模板的重要区域添加注释，说明各部分功能
+6. **样式注释**：为复杂的 CSS 规则添加注释，特别是响应式设计部分
+
 ### TypeScript 类型定义规范
 
 - 优先使用 `interface` 定义对象类型
