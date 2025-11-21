@@ -17,24 +17,29 @@ const mobileRoutes: any[] = [
  */
 const routes: any[] = [
   // 桌面端首页路由
-  { path: "/home", component: () => import("@/views/pages/HomePage.vue") },
-  
+  { path: "/", component: () => import("@/views/pages/HomePage.vue") },
+  // 旧版本云枢钉钉 SSO 页面路由
+  {
+    path: "/sso/yus",
+    props: true,
+    component: () => import("@/views/pages/sso/SSOPage.vue"),
+  },
   // 移动端路由配置，包含子路由
   {
     path: "/mobile",
     component: () => import("@/views/mobile-pages/HomePage.vue"),
     children: mobileRoutes,
   },
-  
+
   // 404 页面路由，捕获所有未匹配的路径
   {
     path: "/:pathMatch(.*)*",
     name: "NotFound",
     component: () => import("@/views/pages/NotFoundPage.vue"),
     meta: {
-      title: "404 - 页面未找到"
-    }
-  }
+      title: "404 - 页面未找到",
+    },
+  },
 ];
 
 /**

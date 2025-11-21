@@ -1,4 +1,5 @@
 <template>
+  <div>yus sso</div>
   {{ res }}
   {{ reports }}
 </template>
