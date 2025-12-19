@@ -12,10 +12,10 @@
 ### 核心原则
 
 - **文档注释优先**：功能上线后必须添加注释，使用 JSDoc 格式
-- **AI 自动编码优先**：优先使用 GLM4.5 及以上能力 AI 自动化编码
+- **AI 自动编码优先**：优先使用 AI 自动化编码，相关规范参考目录下的 vue3-ai-prompt.md 文件
+- **可读性优先**：代码必须易于阅读，命名必须清晰易懂，注释必须完整准确
 - **高内聚低耦合**：非必要严禁抽象封装，单文件为隔离整体环境
 - **语义化命名**：禁止使用拼音缩写，变量名、函数名、文件名必须有意义，使用英文单词，除非极端情况下允许使用拼音缩写
-- **AI 审核优先**：代码提交前必须经过 AI 审核，确保满足 README 中要求的规范
 
 ### 代码组织约定
 
@@ -324,7 +324,7 @@ const getUserInfo = (userId: string) => {
         fallback-src="/default-avatar.png"
       />
     </div>
-    
+
     <!-- 用户信息区域 -->
     <div class="info-section">
       <h3 class="user-name">{{ userInfo.name }}</h3>
@@ -333,7 +333,7 @@ const getUserInfo = (userId: string) => {
         {{ userInfo.department }}
       </p>
     </div>
-    
+
     <!-- 操作按钮区域 -->
     <div class="action-section" v-if="showActions">
       <n-space>
@@ -345,11 +345,7 @@ const getUserInfo = (userId: string) => {
         >
           查看详情
         </n-button>
-        <n-button
-          @click="handleEdit"
-          type="tertiary"
-          size="small"
-        >
+        <n-button @click="handleEdit" type="tertiary" size="small">
           编辑
         </n-button>
       </n-space>
@@ -526,12 +522,12 @@ const loadUserDetails = async (userId: string): Promise<UserInfo> => {
     flex-direction: column;
     text-align: center;
   }
-  
+
   .avatar-section {
     margin-right: 0;
     margin-bottom: 12px;
   }
-  
+
   .action-section {
     margin-left: 0;
     margin-top: 12px;
@@ -595,8 +591,12 @@ const props = withDefaults(defineProps<Props>(), {
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 </style>
 ```
