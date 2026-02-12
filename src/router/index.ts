@@ -24,6 +24,12 @@ const routes: any[] = [
     props: true,
     component: () => import("@/views/pages/sso/SSOPage.vue"),
   },
+  {
+    path: "/bidding/public-bid",
+    props: true,
+    component: () =>
+      import("@/views/pages/bidding-procurement/PublicEquipmentBidding.vue"),
+  },
   // 移动端路由配置，包含子路由
   {
     path: "/mobile",
