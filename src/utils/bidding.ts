@@ -161,6 +161,17 @@ export const createEmptyFormData = (): IBiddingFormData => ({
     abortBidWhenOverBudget: null,
     isSmallMediumEnterprise: "yes",
   },
+  comprehensiveScoring: {
+    commercialScoring: {
+      items: [],
+    },
+    technicalScoring: {
+      items: [],
+    },
+    priceScoring: {
+      items: [],
+    },
+  },
 });
 
 /**

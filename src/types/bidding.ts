@@ -162,6 +162,40 @@ export type NoNegativeDeviationType =
   | "technical-asterisk";
 
 /**
+ * 评分表项接口
+ */
+export interface IScoringItem {
+  /** 唯一标识 */
+  index: number;
+  /** 指标分项名称 */
+  itemName: string;
+  /** 分值 */
+  score: number | null;
+  /** 打分标准 */
+  scoringStandard: string;
+}
+
+/**
+ * 评分表数据接口
+ */
+export interface IScoringTable {
+  /** 评分项列表 */
+  items: IScoringItem[];
+}
+
+/**
+ * 综合评分法数据接口
+ */
+export interface IComprehensiveScoring {
+  /** 商务评分表 */
+  commercialScoring: IScoringTable;
+  /** 技术评分表 */
+  technicalScoring: IScoringTable;
+  /** 价格评分表 */
+  priceScoring: IScoringTable;
+}
+
+/**
  * 投标人须知接口
  */
 export interface IBidderInstructions {
@@ -239,6 +273,8 @@ export interface IBiddingFormData {
   basicInfo: IBasicInfo;
   /** 投标人须知 */
   bidderInstructions: IBidderInstructions;
+  /** 综合评分法数据 */
+  comprehensiveScoring?: IComprehensiveScoring;
 }
 
 /**
