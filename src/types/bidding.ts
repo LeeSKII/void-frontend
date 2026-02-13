@@ -14,26 +14,6 @@ export type BidMethod = "public" | "invitation" | "competitive";
 export type ProcurementType = "goods" | "services" | "construction";
 
 /**
- * 付款方式枚举
- */
-export type PaymentMethod = "one-time" | "installment" | "progress";
-
-/**
- * 发票类型枚举
- */
-export type InvoiceType = "vat-special" | "vat-general" | "electronic";
-
-/**
- * 争议解决方式枚举
- */
-export type DisputeResolution = "negotiation" | "arbitration" | "litigation";
-
-/**
- * 评标办法枚举
- */
-export type EvaluationMethod = "comprehensive" | "lowest-price";
-
-/**
  * 资质要求类型
  */
 export type QualificationRequirementType = "option1" | "option2" | "option3";
@@ -252,60 +232,6 @@ export interface IBidderInstructions {
 }
 
 /**
- * 招标表单商务条款接口
- */
-export interface ICommercialTerms {
-  /** 付款方式 */
-  paymentMethod: PaymentMethod;
-  /** 付款比例 */
-  paymentRatio?: string;
-  /** 付款条件 */
-  paymentTerms: string;
-  /** 发票类型 */
-  invoiceType: InvoiceType;
-  /** 税率 */
-  taxRate: number | null;
-  /** 履约保证金（万元） */
-  performanceBond: number | null;
-  /** 违约金比例（千分比） */
-  penaltyRate: number | null;
-  /** 争议解决方式 */
-  disputeResolution: DisputeResolution;
-  /** 合同签订期限（天） */
-  contractDeadline: number | null;
-  /** 是否允许分包 */
-  allowSubcontract: boolean | null;
-  /** 分包限制 */
-  subcontractLimit?: string;
-  /** 商务附件文件列表 */
-  commercialAttachments?: string[];
-}
-
-/**
- * 招标表单其他要求接口
- */
-export interface IOtherRequirements {
-  /** 评标办法 */
-  evaluationMethod: EvaluationMethod;
-  /** 评分权重 */
-  scoringWeights: string;
-  /** 评审专家数量 */
-  expertCount: number | null;
-  /** 公示媒介 */
-  publicityMedia: string[];
-  /** 公示期（天） */
-  publicityPeriod: number | null;
-  /** 异议处理 */
-  objectionHandling: string;
-  /** 特殊说明 */
-  specialInstructions?: string;
-  /** 招标公告 */
-  bidAnnouncement: string;
-  /** 相关附件文件列表 */
-  relatedAttachments?: string[];
-}
-
-/**
  * 招标表单完整数据接口
  */
 export interface IBiddingFormData {
@@ -313,10 +239,6 @@ export interface IBiddingFormData {
   basicInfo: IBasicInfo;
   /** 投标人须知 */
   bidderInstructions: IBidderInstructions;
-  /** 商务条款 */
-  commercialTerms: ICommercialTerms;
-  /** 其他要求 */
-  otherRequirements: IOtherRequirements;
 }
 
 /**

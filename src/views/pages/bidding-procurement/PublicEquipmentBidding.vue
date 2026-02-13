@@ -15,7 +15,7 @@
 
     <!-- 步骤进度条 -->
     <n-card class="public-bidding__steps-card">
-      <n-steps :current="currentStep" :status="stepStatus">
+      <n-steps :current="currentStep">
         <n-step
           title="基础信息"
           description="填写项目基本信息"
@@ -27,14 +27,9 @@
           @click="() => handleStepClick(2)"
         />
         <n-step
-          title="商务条款"
-          description="填写商务合同条款"
+          title="综合评分法"
+          description="填写综合评分法相关内容"
           @click="() => handleStepClick(3)"
-        />
-        <n-step
-          title="其他要求"
-          description="填写评审与公示要求"
-          @click="() => handleStepClick(4)"
         />
       </n-steps>
     </n-card>
@@ -978,250 +973,13 @@
           </div>
         </div>
 
-        <!-- 步骤三：商务条款 -->
+        <!-- 步骤三：综合评分法 -->
         <div v-show="currentStep === 3" class="public-bidding__step-content">
-          <h3 class="public-bidding__section-title">付款条款</h3>
-          <div class="public-bidding__form-grid">
-            <n-form-item label="付款方式" path="commercialTerms.paymentMethod">
-              <n-select
-                v-model:value="formData.commercialTerms.paymentMethod"
-                :options="paymentMethodOptions"
-                placeholder="请选择付款方式"
-              />
-            </n-form-item>
-
-            <n-form-item
-              v-if="
-                formData.commercialTerms.paymentMethod === 'installment' ||
-                formData.commercialTerms.paymentMethod === 'progress'
-              "
-              label="付款比例"
-              path="commercialTerms.paymentRatio"
-            >
-              <n-input
-                v-model:value="formData.commercialTerms.paymentRatio"
-                placeholder="如：3:3:4 或 按进度"
-                maxlength="50"
-              />
-            </n-form-item>
-
-            <n-form-item
-              label="付款条件"
-              path="commercialTerms.paymentTerms"
-              class="public-bidding__form-grid__item--full"
-            >
-              <n-input
-                v-model:value="formData.commercialTerms.paymentTerms"
-                type="textarea"
-                placeholder="请描述付款节点和条件"
-                :autosize="{ minRows: 3, maxRows: 6 }"
-                maxlength="1000"
-              />
-            </n-form-item>
-
-            <n-form-item label="发票类型" path="commercialTerms.invoiceType">
-              <n-select
-                v-model:value="formData.commercialTerms.invoiceType"
-                :options="invoiceTypeOptions"
-                placeholder="请选择发票类型"
-              />
-            </n-form-item>
-
-            <n-form-item label="税率（%）" path="commercialTerms.taxRate">
-              <n-input-number
-                v-model:value="formData.commercialTerms.taxRate"
-                :min="0"
-                :max="100"
-                :precision="2"
-                placeholder="请输入税率"
-                style="width: 100%"
-              >
-                <template #suffix>
-                  <span>%</span>
-                </template>
-              </n-input-number>
-            </n-form-item>
-          </div>
-
-          <h3 class="public-bidding__section-title">保证金与违约金</h3>
-          <div class="public-bidding__form-grid">
-            <n-form-item
-              label="履约保证金（万元）"
-              path="commercialTerms.performanceBond"
-            >
-              <n-input-number
-                v-model:value="formData.commercialTerms.performanceBond"
-                :min="0"
-                :precision="2"
-                placeholder="请输入履约保证金"
-                style="width: 100%"
-              />
-            </n-form-item>
-
-            <n-form-item
-              label="违约金比例（‰）"
-              path="commercialTerms.penaltyRate"
-            >
-              <n-input-number
-                v-model:value="formData.commercialTerms.penaltyRate"
-                :min="0"
-                :max="100"
-                :precision="2"
-                placeholder="请输入违约金比例"
-                style="width: 100%"
-              >
-                <template #suffix>
-                  <span>‰</span>
-                </template>
-              </n-input-number>
-            </n-form-item>
+          <div class="public-bidding__empty-state">
+            <p>综合评分法相关内容待补充...</p>
           </div>
         </div>
 
-        <!-- 步骤四：其他要求 -->
-        <div v-show="currentStep === 4" class="public-bidding__step-content">
-          <h3 class="public-bidding__section-title">评标办法</h3>
-          <div class="public-bidding__form-grid">
-            <n-form-item
-              label="评标办法"
-              path="otherRequirements.evaluationMethod"
-            >
-              <n-select
-                v-model:value="formData.otherRequirements.evaluationMethod"
-                :options="evaluationMethodOptions"
-                placeholder="请选择评标办法"
-              />
-            </n-form-item>
-
-            <n-form-item
-              label="评分权重"
-              path="otherRequirements.scoringWeights"
-            >
-              <n-input
-                v-model:value="formData.otherRequirements.scoringWeights"
-                placeholder="如：技术60% 商务40%"
-                maxlength="50"
-              />
-            </n-form-item>
-
-            <n-form-item
-              label="评审专家数量"
-              path="otherRequirements.expertCount"
-            >
-              <n-input-number
-                v-model:value="formData.otherRequirements.expertCount"
-                :min="3"
-                :precision="0"
-                placeholder="至少3人，应为奇数"
-                style="width: 100%"
-              />
-            </n-form-item>
-
-            <n-form-item
-              label="公示期（天）"
-              path="otherRequirements.publicityPeriod"
-            >
-              <n-input-number
-                v-model:value="formData.otherRequirements.publicityPeriod"
-                :min="3"
-                :max="30"
-                :precision="0"
-                placeholder="请输入公示期"
-                style="width: 100%"
-              />
-            </n-form-item>
-
-            <n-form-item
-              label="公示媒介"
-              path="otherRequirements.publicityMedia"
-              class="public-bidding__form-grid__item--full"
-            >
-              <n-checkbox-group
-                v-model:value="formData.otherRequirements.publicityMedia"
-              >
-                <n-space>
-                  <n-checkbox value="government" label="政府采购网" />
-                  <n-checkbox value="company" label="公司官网" />
-                  <n-checkbox value="media" label="媒体公告" />
-                  <n-checkbox value="other" label="其他" />
-                </n-space>
-              </n-checkbox-group>
-            </n-form-item>
-
-            <n-form-item
-              label="异议处理"
-              path="otherRequirements.objectionHandling"
-              class="public-bidding__form-grid__item--full"
-            >
-              <n-input
-                v-model:value="formData.otherRequirements.objectionHandling"
-                type="textarea"
-                placeholder="请描述异议处理的流程和联系方式"
-                :autosize="{ minRows: 3, maxRows: 6 }"
-                maxlength="1000"
-              />
-            </n-form-item>
-          </div>
-
-          <h3 class="public-bidding__section-title">特殊说明</h3>
-          <div class="public-bidding__form-grid">
-            <n-form-item
-              label="特殊说明"
-              path="otherRequirements.specialInstructions"
-              class="public-bidding__form-grid__item--full"
-            >
-              <n-input
-                v-model:value="formData.otherRequirements.specialInstructions"
-                type="textarea"
-                placeholder="其他需要特殊说明的内容（可选）"
-                :autosize="{ minRows: 3, maxRows: 6 }"
-                maxlength="1000"
-              />
-            </n-form-item>
-          </div>
-
-          <h3 class="public-bidding__section-title">招标公告</h3>
-          <div class="public-bidding__form-grid">
-            <n-form-item
-              label="招标公告内容"
-              path="otherRequirements.bidAnnouncement"
-              class="public-bidding__form-grid__item--full"
-            >
-              <n-input
-                v-model:value="formData.otherRequirements.bidAnnouncement"
-                type="textarea"
-                placeholder="请输入招标公告正文内容"
-                :autosize="{ minRows: 6, maxRows: 12 }"
-                maxlength="5000"
-                show-count
-              />
-            </n-form-item>
-          </div>
-
-          <h3 class="public-bidding__section-title">附件上传</h3>
-          <div class="public-bidding__form-grid">
-            <n-form-item
-              label="相关附件"
-              path="otherRequirements.relatedAttachments"
-              class="public-bidding__form-grid__item--full"
-            >
-              <n-upload
-                :file-list="relatedFileList"
-                :custom-request="handleRelatedUpload"
-                @update:file-list="handleRelatedFileListChange"
-                multiple
-                directory-dnd
-              >
-                <n-button>选择文件</n-button>
-              </n-upload>
-              <template #feedback>
-                <span class="public-bidding__help-text">
-                  支持上传公告附件、资格预审文件等相关资料
-                </span>
-              </template>
-            </n-form-item>
-          </div>
-        </div>
       </n-form>
     </n-card>
 
@@ -1254,12 +1012,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount } from "vue";
-import {
-  useMessage,
-  useDialog,
-  type UploadFileInfo,
-  type UploadCustomRequestOptions,
-} from "naive-ui";
+import { useMessage, useDialog } from "naive-ui";
 import {
   createEmptyFormData,
   saveDraftToLocalStorage,
@@ -1286,7 +1039,6 @@ const dialog = useDialog();
  * 步骤状态
  */
 const currentStep = ref(1);
-const stepStatus = ref<"process" | "finish" | "error" | "wait">("process");
 
 /**
  * 表单引用
@@ -1311,12 +1063,6 @@ const lastSavedTime = ref("");
 const formData = ref<IBiddingFormData>(createEmptyFormData());
 
 /**
- * 文件列表
- */
-const commercialFileList = ref<UploadFileInfo[]>([]);
-const relatedFileList = ref<UploadFileInfo[]>([]);
-
-/**
  * 招标主体选项（静态数据）
  */
 const bidSubjectOptions: ISelectOption[] = [
@@ -1324,41 +1070,6 @@ const bidSubjectOptions: ISelectOption[] = [
   { value: "company-subsidiary-a", label: "子公司A" },
   { value: "company-subsidiary-b", label: "子公司B" },
   { value: "company-subsidiary-c", label: "子公司C" },
-];
-
-/**
- * 付款方式选项
- */
-const paymentMethodOptions: ISelectOption[] = [
-  { value: "one-time", label: "一次性付款" },
-  { value: "installment", label: "分期付款" },
-  { value: "progress", label: "按进度付款" },
-];
-
-/**
- * 发票类型选项
- */
-const invoiceTypeOptions: ISelectOption[] = [
-  { value: "vat-special", label: "增值税专用发票" },
-  { value: "vat-general", label: "增值税普通发票" },
-  { value: "electronic", label: "电子发票" },
-];
-
-/**
- * 争议解决方式选项
- */
-const disputeResolutionOptions: ISelectOption[] = [
-  { value: "negotiation", label: "协商" },
-  { value: "arbitration", label: "仲裁" },
-  { value: "litigation", label: "诉讼" },
-];
-
-/**
- * 评标办法选项
- */
-const evaluationMethodOptions: ISelectOption[] = [
-  { value: "comprehensive", label: "综合评分法" },
-  { value: "lowest-price", label: "最低评标价法" },
 ];
 
 /**
@@ -1484,54 +1195,6 @@ const handleSubmit = async () => {
 };
 
 /**
- * 处理商务附件上传
- */
-const handleCommercialUpload = (options: UploadCustomRequestOptions) => {
-  const { file, onFinish } = options;
-  setTimeout(() => {
-    const currentAttachments =
-      formData.value.commercialTerms.commercialAttachments || [];
-    formData.value.commercialTerms.commercialAttachments = [
-      ...currentAttachments,
-      file.name,
-    ];
-    onFinish();
-  }, 1000);
-};
-
-const handleCommercialFileListChange = (files: UploadFileInfo[]) => {
-  commercialFileList.value = files;
-  const fileNames = files
-    .filter((f) => f.status === "finished")
-    .map((f) => f.name);
-  formData.value.commercialTerms.commercialAttachments = fileNames;
-};
-
-/**
- * 处理相关附件上传
- */
-const handleRelatedUpload = (options: UploadCustomRequestOptions) => {
-  const { file, onFinish } = options;
-  setTimeout(() => {
-    const currentAttachments =
-      formData.value.otherRequirements.relatedAttachments || [];
-    formData.value.otherRequirements.relatedAttachments = [
-      ...currentAttachments,
-      file.name,
-    ];
-    onFinish();
-  }, 1000);
-};
-
-const handleRelatedFileListChange = (files: UploadFileInfo[]) => {
-  relatedFileList.value = files;
-  const fileNames = files
-    .filter((f) => f.status === "finished")
-    .map((f) => f.name);
-  formData.value.otherRequirements.relatedAttachments = fileNames;
-};
-
-/**
  * 自动保存定时器
  */
 let autoSaveTimer: number | null = null;
@@ -1636,6 +1299,24 @@ onBeforeUnmount(() => {
   padding: 16px 0;
 }
 
+/* 空状态占位区域 */
+.public-bidding__empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  padding: 48px 24px;
+  color: #909399;
+  background-color: #f5f7fa;
+  border-radius: 4px;
+}
+
+.public-bidding__empty-state p {
+  margin: 0;
+  font-size: 14px;
+}
+
 /* 分节标题 */
 .public-bidding__section-title {
   margin: 24px 0 16px 0;
@@ -1661,29 +1342,6 @@ onBeforeUnmount(() => {
   border-bottom: 1px dashed #e5e7eb;
 }
 
-/* 质量问题说明样式（固定注释） */
-.quality-issue-note {
-  width: 100%;
-  padding: 12px;
-  background-color: #f5f7fa;
-  border-left: 3px solid #409eff;
-  border-radius: 2px;
-}
-
-.quality-issue-note__title {
-  margin: 0 0 8px;
-  font-size: 13px;
-  font-weight: 500;
-  color: #606266;
-}
-
-.quality-issue-note__content {
-  margin: 0;
-  font-size: 13px;
-  color: #333;
-  white-space: pre-wrap;
-}
-
 /* 表单网格布局 */
 .public-bidding__form-grid {
   display: grid;
@@ -1693,14 +1351,6 @@ onBeforeUnmount(() => {
 
 .public-bidding__form-grid__item--full {
   grid-column: 1 / -1;
-}
-
-/* 帮助文本 */
-.public-bidding__help-text {
-  display: block;
-  margin-top: 4px;
-  font-size: 12px;
-  color: #909399;
 }
 
 /* 投标人资格要求样式 */

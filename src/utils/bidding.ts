@@ -161,31 +161,6 @@ export const createEmptyFormData = (): IBiddingFormData => ({
     abortBidWhenOverBudget: null,
     isSmallMediumEnterprise: "yes",
   },
-  commercialTerms: {
-    paymentMethod: "one-time",
-    paymentRatio: "",
-    paymentTerms: "",
-    invoiceType: "vat-special",
-    taxRate: null,
-    performanceBond: null,
-    penaltyRate: null,
-    disputeResolution: "negotiation",
-    contractDeadline: null,
-    allowSubcontract: null,
-    subcontractLimit: "",
-    commercialAttachments: [],
-  },
-  otherRequirements: {
-    evaluationMethod: "comprehensive",
-    scoringWeights: "",
-    expertCount: null,
-    publicityMedia: [],
-    publicityPeriod: null,
-    objectionHandling: "",
-    specialInstructions: "",
-    bidAnnouncement: "",
-    relatedAttachments: [],
-  },
 });
 
 /**
@@ -310,7 +285,7 @@ export const formatDateTime = (timestamp: number | null): string => {
  * @returns 步骤名称
  */
 export const getStepName = (step: number): string => {
-  const names = ["", "基础信息", "投标人须知", "商务条款", "其他要求"];
+  const names = ["", "基础信息", "投标人须知", "综合评分法"];
   return names[step] || "";
 };
 
