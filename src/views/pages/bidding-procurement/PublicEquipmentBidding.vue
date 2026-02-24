@@ -1370,8 +1370,8 @@ import {
   getDraftSavedTime,
   submitBiddingForm,
   AUTO_SAVE_INTERVAL,
-  getTodayTimestamp,
-} from "@/utils/bidding";
+} from "@/utils/business/bidding";
+import { getTodayTimestamp } from "@/utils/common/date";
 import type { IBiddingFormData, ISelectOption } from "@/types/bidding";
 
 /**
@@ -1468,15 +1468,15 @@ const saveDraft = () => {
 /**
  * 保存草稿按钮点击处理
  */
-const handleSaveDraft = () => {
-  savingDraft.value = true;
-  try {
-    saveDraft();
-    message.success("草稿已保存");
-  } finally {
-    savingDraft.value = false;
-  }
-};
+// const handleSaveDraft = () => {
+//   savingDraft.value = true;
+//   try {
+//     saveDraft();
+//     message.success("草稿已保存");
+//   } finally {
+//     savingDraft.value = false;
+//   }
+// };
 
 /**
  * 恢复草稿
