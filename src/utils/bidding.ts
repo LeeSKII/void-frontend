@@ -120,6 +120,8 @@ export const createEmptyFormData = (): IBiddingFormData => ({
     performanceType: "",
     performanceCount: 1,
     acceptJointBid: "no",
+    jointBidMaxMembers: null,
+    jointBidQualificationRequirement: "",
     acceptAgentBid: "accept",
     issueSelectionType: "all",
     qualityIssueNote: "以招标人或上级单位供应商问题记录库为准",

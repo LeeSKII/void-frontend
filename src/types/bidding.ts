@@ -81,6 +81,10 @@ export interface IBasicInfo {
   performanceCount: number;
   /** 本次招标接受联合体投标 */
   acceptJointBid: JointBidType;
+  /** 联合体所有成员数量上限（家） */
+  jointBidMaxMembers: number | null;
+  /** 联合体应具有的资格条件要求 */
+  jointBidQualificationRequirement: string;
   /** 本次招标是否接受代理商投标 */
   acceptAgentBid: AgentBidType;
   /** 未在招标人或上级单位发生过选择项 */

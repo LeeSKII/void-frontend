@@ -307,6 +307,52 @@
               </n-radio-group>
             </n-form-item>
 
+            <!-- 联合体投标具体要求（选择"是"时显示） -->
+            <div
+              v-if="formData.basicInfo.acceptJointBid === 'yes'"
+              class="joint-bid-requirements"
+            >
+              <div class="joint-bid-requirements__title">应满足下列要求：</div>
+
+              <!-- （1）联合体所有成员数量 -->
+              <n-form-item
+                label="联合体所有成员数量不得超过（家）"
+                path="basicInfo.jointBidMaxMembers"
+                class="public-bidding__form-grid__item--full"
+                :rule="{
+                  required: true,
+                  type: 'number',
+                  message: '请输入联合体所有成员数量上限',
+                  trigger: ['blur', 'change'],
+                }"
+              >
+                <n-input-number
+                  v-model:value="formData.basicInfo.jointBidMaxMembers"
+                  :min="2"
+                  :max="50"
+                  :precision="0"
+                  placeholder="请输入成员数量上限"
+                  style="width: 200px"
+                />
+              </n-form-item>
+
+              <!-- （2）联合体应具有的资格条件要求 -->
+              <n-form-item
+                label="联合体应具有的资格条件要求"
+                path="basicInfo.jointBidQualificationRequirement"
+                class="public-bidding__form-grid__item--full"
+              >
+                <n-input
+                  v-model:value="formData.basicInfo.jointBidQualificationRequirement"
+                  type="textarea"
+                  placeholder="请描述联合体应具有的资格条件要求（可选）"
+                  :autosize="{ minRows: 3, maxRows: 6 }"
+                  maxlength="1000"
+                  show-count
+                />
+              </n-form-item>
+            </div>
+
             <!-- 本次招标是否接受代理商投标 -->
             <n-form-item
               label="本次招标是否接受代理商投标"
@@ -2043,5 +2089,23 @@ onBeforeUnmount(() => {
 .scoring-summary__value--total {
   font-size: 20px;
   color: #18a058;
+}
+
+/* 联合体投标要求区域样式 */
+.joint-bid-requirements {
+  width: 100%;
+  padding: 16px;
+  margin-top: 8px;
+  background-color: #f9fafb;
+  border-radius: 4px;
+}
+
+.joint-bid-requirements__title {
+  margin-bottom: 16px;
+  padding-left: 12px;
+  font-size: 14px;
+  font-weight: 550;
+  color: #555;
+  border-left: 3px solid #409eff;
 }
 </style>
