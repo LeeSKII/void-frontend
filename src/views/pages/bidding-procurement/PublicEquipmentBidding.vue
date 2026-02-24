@@ -1,6 +1,6 @@
 <!--
-  @component PublicBidding
-  @description 招标采购申请表单页面，采用多步骤向导形式，支持自动保存草稿
+  @component PublicEquipmentBidding
+  @description 设备招标采购申请表单页面，采用多步骤向导形式，支持自动保存草稿
 -->
 <template>
   <div class="public-bidding">
@@ -1370,8 +1370,9 @@ const disablePreviousDate = (timestamp: number) => {
 
 /**
  * 处理步骤条点击
+ * 平级结构，允许自由切换步骤
  */
-const handleStepClick = async (step: number) => {
+const handleStepClick = (step: number) => {
   if (step === currentStep.value) return;
 
   // 如果尝试跳转到步骤三但步骤三不可见，阻止跳转
@@ -1379,21 +1380,9 @@ const handleStepClick = async (step: number) => {
     return;
   }
 
-  // 向前跳转直接切换
-  if (step < currentStep.value) {
-    currentStep.value = step;
-    saveDraft();
-    return;
-  }
-
-  // 向后跳转需要校验当前及中间步骤
-  try {
-    await formRef.value?.validate();
-    currentStep.value = step;
-    saveDraft();
-  } catch {
-    message.error("请完善当前步骤的必填信息");
-  }
+  // 直接切换步骤（平级结构，无需验证）
+  currentStep.value = step;
+  saveDraft();
 };
 
 /**
