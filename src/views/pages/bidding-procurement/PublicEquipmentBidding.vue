@@ -6,11 +6,21 @@
   <div class="public-bidding">
     <!-- 页面头部 -->
     <div class="public-bidding__header">
-      <h1 class="public-bidding__title">招标采购申请表</h1>
-      <p class="public-bidding__subtitle">请填写完整信息，系统将自动保存草稿</p>
+      <h1 class="public-bidding__title">标准设备招标采购申请表</h1>
+      <!-- <p class="public-bidding__subtitle">请填写完整信息，系统将自动保存草稿</p>
       <p v-if="lastSavedTime" class="public-bidding__saved-hint">
         上次保存时间：{{ lastSavedTime }}
-      </p>
+      </p> -->
+
+      <!-- 固定在右上角的操作按钮 -->
+      <div class="public-bidding__fixed-actions">
+        <n-space>
+          <n-button type="success" @click="handleSubmit" :loading="submitting">
+            提交申请
+          </n-button>
+          <n-button @click="handleReset" type="warning">重置表单</n-button>
+        </n-space>
+      </div>
     </div>
 
     <!-- 步骤进度条 -->
@@ -343,7 +353,9 @@
                 class="public-bidding__form-grid__item--full"
               >
                 <n-input
-                  v-model:value="formData.basicInfo.jointBidQualificationRequirement"
+                  v-model:value="
+                    formData.basicInfo.jointBidQualificationRequirement
+                  "
                   type="textarea"
                   placeholder="请描述联合体应具有的资格条件要求（可选）"
                   :autosize="{ minRows: 3, maxRows: 6 }"
@@ -946,7 +958,9 @@
               path="bidderInstructions.requireBidDocumentFee"
             >
               <n-radio-group
-                v-model:value="formData.bidderInstructions.requireBidDocumentFee"
+                v-model:value="
+                  formData.bidderInstructions.requireBidDocumentFee
+                "
                 name="requireBidDocumentFee"
               >
                 <n-radio :value="false">不要求</n-radio>
@@ -996,7 +1010,9 @@
               class="public-bidding__form-grid__item--full"
             >
               <n-radio-group
-                v-model:value="formData.bidderInstructions.abortBidWhenOverBudget"
+                v-model:value="
+                  formData.bidderInstructions.abortBidWhenOverBudget
+                "
                 name="abortBidWhenOverBudget"
               >
                 <n-radio value="yes">是</n-radio>
@@ -1010,7 +1026,9 @@
               path="bidderInstructions.isSmallMediumEnterprise"
             >
               <n-radio-group
-                v-model:value="formData.bidderInstructions.isSmallMediumEnterprise"
+                v-model:value="
+                  formData.bidderInstructions.isSmallMediumEnterprise
+                "
                 name="isSmallMediumEnterprise"
               >
                 <n-radio value="yes">是</n-radio>
@@ -1021,28 +1039,40 @@
         </div>
 
         <!-- 步骤三：综合评分法 -->
-        <div v-if="showStep3 && currentStep === 3" class="public-bidding__step-content">
+        <div
+          v-if="showStep3 && currentStep === 3"
+          class="public-bidding__step-content"
+        >
           <!-- 综合评分总分统计 -->
           <div class="public-bidding__scoring-summary">
             <div class="scoring-summary__card">
               <span class="scoring-summary__label">商务评分总分：</span>
-              <span class="scoring-summary__value">{{ calculateTotalScore("commercial") }}</span>
+              <span class="scoring-summary__value">{{
+                calculateTotalScore("commercial")
+              }}</span>
             </div>
             <div class="scoring-summary__card">
               <span class="scoring-summary__label">技术评分总分：</span>
-              <span class="scoring-summary__value">{{ calculateTotalScore("technical") }}</span>
+              <span class="scoring-summary__value">{{
+                calculateTotalScore("technical")
+              }}</span>
             </div>
             <div class="scoring-summary__card">
               <span class="scoring-summary__label">价格评分总分：</span>
-              <span class="scoring-summary__value">{{ calculateTotalScore("price") }}</span>
+              <span class="scoring-summary__value">{{
+                calculateTotalScore("price")
+              }}</span>
             </div>
             <div class="scoring-summary__card scoring-summary__card--total">
               <span class="scoring-summary__label">综合评分总分：</span>
-              <span class="scoring-summary__value scoring-summary__value--total">{{
-                calculateTotalScore("commercial") +
-                calculateTotalScore("technical") +
-                calculateTotalScore("price")
-              }}</span>
+              <span
+                class="scoring-summary__value scoring-summary__value--total"
+                >{{
+                  calculateTotalScore("commercial") +
+                  calculateTotalScore("technical") +
+                  calculateTotalScore("price")
+                }}</span
+              >
             </div>
           </div>
 
@@ -1061,12 +1091,16 @@
               </thead>
               <tbody>
                 <tr
-                  v-for="(item, index) in formData.comprehensiveScoring?.commercialScoring.items"
+                  v-for="(item, index) in formData.comprehensiveScoring
+                    ?.commercialScoring.items"
                   :key="item.index"
                 >
                   <td>{{ index + 1 }}</td>
                   <td>
-                    <n-input v-model:value="item.itemName" placeholder="请输入指标分项名" />
+                    <n-input
+                      v-model:value="item.itemName"
+                      placeholder="请输入指标分项名"
+                    />
                   </td>
                   <td>
                     <n-input-number
@@ -1078,10 +1112,17 @@
                     />
                   </td>
                   <td>
-                    <n-input v-model:value="item.scoringStandard" placeholder="请输入打分标准" />
+                    <n-input
+                      v-model:value="item.scoringStandard"
+                      placeholder="请输入打分标准"
+                    />
                   </td>
                   <td class="scoring-table__action-col">
-                    <n-button size="small" type="error" @click="removeCommercialRow(index)">
+                    <n-button
+                      size="small"
+                      type="error"
+                      @click="removeCommercialRow(index)"
+                    >
                       删除
                     </n-button>
                   </td>
@@ -1089,16 +1130,20 @@
                 <tr
                   v-if="
                     !formData.comprehensiveScoring?.commercialScoring.items ||
-                    formData.comprehensiveScoring.commercialScoring.items.length === 0
+                    formData.comprehensiveScoring.commercialScoring.items
+                      .length === 0
                   "
                 >
-                  <td colspan="5" class="scoring-table__empty-row">暂无数据，请点击下方按钮添加</td>
+                  <td colspan="5" class="scoring-table__empty-row">
+                    暂无数据，请点击下方按钮添加
+                  </td>
                 </tr>
                 <!-- 分值合计行 -->
                 <tr
                   v-if="
                     formData.comprehensiveScoring?.commercialScoring.items &&
-                    formData.comprehensiveScoring.commercialScoring.items.length > 0
+                    formData.comprehensiveScoring.commercialScoring.items
+                      .length > 0
                   "
                   class="scoring-table__total-row"
                 >
@@ -1133,12 +1178,16 @@
               </thead>
               <tbody>
                 <tr
-                  v-for="(item, index) in formData.comprehensiveScoring?.technicalScoring.items"
+                  v-for="(item, index) in formData.comprehensiveScoring
+                    ?.technicalScoring.items"
                   :key="item.index"
                 >
                   <td>{{ index + 1 }}</td>
                   <td>
-                    <n-input v-model:value="item.itemName" placeholder="请输入指标分项名" />
+                    <n-input
+                      v-model:value="item.itemName"
+                      placeholder="请输入指标分项名"
+                    />
                   </td>
                   <td>
                     <n-input-number
@@ -1150,10 +1199,17 @@
                     />
                   </td>
                   <td>
-                    <n-input v-model:value="item.scoringStandard" placeholder="请输入打分标准" />
+                    <n-input
+                      v-model:value="item.scoringStandard"
+                      placeholder="请输入打分标准"
+                    />
                   </td>
                   <td class="scoring-table__action-col">
-                    <n-button size="small" type="error" @click="removeTechnicalRow(index)">
+                    <n-button
+                      size="small"
+                      type="error"
+                      @click="removeTechnicalRow(index)"
+                    >
                       删除
                     </n-button>
                   </td>
@@ -1161,16 +1217,20 @@
                 <tr
                   v-if="
                     !formData.comprehensiveScoring?.technicalScoring.items ||
-                    formData.comprehensiveScoring.technicalScoring.items.length === 0
+                    formData.comprehensiveScoring.technicalScoring.items
+                      .length === 0
                   "
                 >
-                  <td colspan="5" class="scoring-table__empty-row">暂无数据，请点击下方按钮添加</td>
+                  <td colspan="5" class="scoring-table__empty-row">
+                    暂无数据，请点击下方按钮添加
+                  </td>
                 </tr>
                 <!-- 分值合计行 -->
                 <tr
                   v-if="
                     formData.comprehensiveScoring?.technicalScoring.items &&
-                    formData.comprehensiveScoring.technicalScoring.items.length > 0
+                    formData.comprehensiveScoring.technicalScoring.items
+                      .length > 0
                   "
                   class="scoring-table__total-row"
                 >
@@ -1193,7 +1253,9 @@
           <!-- 价格评分表 -->
           <h3 class="public-bidding__section-title">价格评分表</h3>
           <div class="public-bidding__scoring-table-wrapper">
-            <table class="public-bidding__scoring-table public-bidding__scoring-table--price">
+            <table
+              class="public-bidding__scoring-table public-bidding__scoring-table--price"
+            >
               <thead>
                 <tr>
                   <th>序号</th>
@@ -1204,7 +1266,8 @@
               </thead>
               <tbody>
                 <tr
-                  v-for="(item, index) in formData.comprehensiveScoring?.priceScoring.items"
+                  v-for="(item, index) in formData.comprehensiveScoring
+                    ?.priceScoring.items"
                   :key="item.index"
                 >
                   <td>{{ index + 1 }}</td>
@@ -1218,10 +1281,17 @@
                     />
                   </td>
                   <td>
-                    <n-input v-model:value="item.scoringStandard" placeholder="请输入打分标准" />
+                    <n-input
+                      v-model:value="item.scoringStandard"
+                      placeholder="请输入打分标准"
+                    />
                   </td>
                   <td class="scoring-table__action-col">
-                    <n-button size="small" type="error" @click="removePriceRow(index)">
+                    <n-button
+                      size="small"
+                      type="error"
+                      @click="removePriceRow(index)"
+                    >
                       删除
                     </n-button>
                   </td>
@@ -1229,10 +1299,13 @@
                 <tr
                   v-if="
                     !formData.comprehensiveScoring?.priceScoring.items ||
-                    formData.comprehensiveScoring.priceScoring.items.length === 0
+                    formData.comprehensiveScoring.priceScoring.items.length ===
+                      0
                   "
                 >
-                  <td colspan="4" class="scoring-table__empty-row">暂无数据，请点击下方按钮添加</td>
+                  <td colspan="4" class="scoring-table__empty-row">
+                    暂无数据，请点击下方按钮添加
+                  </td>
                 </tr>
                 <!-- 分值合计行 -->
                 <tr
@@ -1258,22 +1331,18 @@
             </n-button>
           </div>
         </div>
-
       </n-form>
     </n-card>
 
-    <!-- 操作按钮区 -->
-    <div class="public-bidding__actions">
+    <!-- 操作按钮区（已移至右上角固定位置，此处保留作为移动端备用） -->
+    <!-- <div class="public-bidding__actions">
       <n-space>
         <n-button type="success" @click="handleSubmit" :loading="submitting">
           提交申请
         </n-button>
-        <n-button @click="handleSaveDraft" :disabled="savingDraft">
-          {{ savingDraft ? "保存中..." : "保存草稿" }}
-        </n-button>
         <n-button @click="handleReset" type="warning">重置表单</n-button>
       </n-space>
-    </div>
+    </div> -->
 
     <!-- 草稿恢复提示 -->
     <n-modal
@@ -1346,14 +1415,15 @@ const formData = ref<IBiddingFormData>(createEmptyFormData());
  * 仅当选择了综合评分法时才显示步骤三
  */
 const showStep3 = computed(
-  () => formData.value.bidderInstructions.evaluationMethodType === "comprehensive",
+  () =>
+    formData.value.bidderInstructions.evaluationMethodType === "comprehensive",
 );
 
 /**
  * 招标主体选项（静态数据）
  */
 const bidSubjectOptions: ISelectOption[] = [
-  { value: "company-main", label: "总公司" },
+  { value: "company-main", label: "中冶长天国际工程有限责任公司" },
   { value: "company-subsidiary-a", label: "子公司A" },
   { value: "company-subsidiary-b", label: "子公司B" },
   { value: "company-subsidiary-c", label: "子公司C" },
@@ -1548,7 +1618,10 @@ const removeCommercialRow = (index: number) => {
     positiveText: "确定",
     negativeText: "取消",
     onPositiveClick: () => {
-      formData.value.comprehensiveScoring?.commercialScoring.items.splice(index, 1);
+      formData.value.comprehensiveScoring?.commercialScoring.items.splice(
+        index,
+        1,
+      );
       message.success("删除成功");
     },
   });
@@ -1565,7 +1638,10 @@ const removeTechnicalRow = (index: number) => {
     positiveText: "确定",
     negativeText: "取消",
     onPositiveClick: () => {
-      formData.value.comprehensiveScoring?.technicalScoring.items.splice(index, 1);
+      formData.value.comprehensiveScoring?.technicalScoring.items.splice(
+        index,
+        1,
+      );
       message.success("删除成功");
     },
   });
@@ -1676,7 +1752,9 @@ onBeforeUnmount(() => {
 
 /* 页面头部 */
 .public-bidding__header {
+  position: relative;
   margin-bottom: 24px;
+  padding: 16px 0;
   text-align: center;
 }
 
@@ -1823,6 +1901,27 @@ onBeforeUnmount(() => {
   justify-content: center;
   padding: 24px 0;
   border-top: 1px solid #e5e7eb;
+}
+
+/* 固定在右上角的操作按钮 */
+.public-bidding__fixed-actions {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+  z-index: 10;
+}
+
+.public-bidding__fixed-actions :deep(.n-space) {
+  background-color: rgba(255, 255, 255, 0.95);
+  padding: 8px 16px;
+  border-radius: 8px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease;
+}
+
+.public-bidding__fixed-actions :deep(.n-space:hover) {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
 }
 
 /* 响应式设计 */
