@@ -89,7 +89,6 @@
                 type="date"
                 placeholder="请选择日期"
                 style="width: 100%"
-                :is-date-disabled="disablePreviousDate"
               />
             </n-form-item>
           </div>
@@ -137,7 +136,6 @@
                 type="date"
                 placeholder="请选择交货日期"
                 style="width: 100%"
-                :is-date-disabled="disablePreviousDate"
               />
             </n-form-item>
 
@@ -1429,14 +1427,6 @@ const bidSubjectOptions: ISelectOption[] = [
   { value: "company-subsidiary-c", label: "子公司C" },
 ];
 
-/**
- * 禁用之前的日期
- */
-const disablePreviousDate = (timestamp: number) => {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  return timestamp < today.getTime();
-};
 
 /**
  * 处理步骤条点击
