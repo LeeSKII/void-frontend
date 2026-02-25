@@ -18,6 +18,9 @@
           <n-button type="success" @click="handleSubmit" :loading="submitting">
             提交申请
           </n-button>
+          <n-button type="info" @click="handleExportWord" :loading="exporting">
+            导出Word
+          </n-button>
           <n-button @click="handleReset" type="warning">重置表单</n-button>
         </n-space>
       </div>
@@ -1369,6 +1372,7 @@ import {
   submitBiddingForm,
   AUTO_SAVE_INTERVAL,
 } from "@/utils/business/bidding";
+import { exportWordDocumentWithProgress } from "@/utils/business/bidding-export";
 import { getTodayTimestamp } from "@/utils/common/date";
 import type { IBiddingFormData, ISelectOption } from "@/types/bidding";
 
@@ -1395,7 +1399,11 @@ const formRef = ref();
  * 提交状态
  */
 const submitting = ref(false);
-const savingDraft = ref(false);
+
+/**
+ * 导出状态
+ */
+const exporting = ref(false);
 
 /**
  * 草稿相关
@@ -1426,7 +1434,6 @@ const bidSubjectOptions: ISelectOption[] = [
   { value: "company-subsidiary-b", label: "子公司B" },
   { value: "company-subsidiary-c", label: "子公司C" },
 ];
-
 
 /**
  * 处理步骤条点击
@@ -1532,6 +1539,44 @@ const handleSubmit = async () => {
     message.error("提交失败，请重试");
   } finally {
     submitting.value = false;
+  }
+};
+
+/**
+ * 导出 Word 文档
+ */
+const handleExportWord = async () => {
+  // 验证必填字段
+  const { basicInfo } = formData.value;
+  if (!basicInfo.projectName || !basicInfo.bidNumber) {
+    message.warning("请完善项目名称和招标编号后再导出");
+    return;
+  }
+
+  exporting.value = true;
+  try {
+    const result = await exportWordDocumentWithProgress(
+      formData.value,
+      () => {
+        // 进度回调（暂不展示具体进度）
+      },
+      {
+        templatePath:
+          "/void-frontend/v3template/标准设备招标文件_公开招标.docx",
+        outputFileName: `公开设备招标文件_${basicInfo.bidNumber}`,
+      },
+    );
+
+    if (result.success) {
+      message.success("Word 文档导出成功");
+    } else {
+      message.error(`导出失败: ${result.error || "未知错误"}`);
+    }
+  } catch (error) {
+    message.error("导出失败，请重试");
+    console.error("导出异常:", error);
+  } finally {
+    exporting.value = false;
   }
 };
 
