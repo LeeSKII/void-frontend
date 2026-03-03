@@ -21,7 +21,10 @@ import type {
  * @param url 文件路径（支持 file:// 协议或相对路径）
  * @param callback 回调函数
  */
-function loadFile(url: string, callback: (error: Error | null, content: any) => void) {
+function loadFile(
+  url: string,
+  callback: (error: Error | null, content: any) => void,
+) {
   // 对中文文件名进行 URL 编码
   const encodedUrl = encodeURI(url);
   PizZipUtils.getBinaryContent(encodedUrl, callback);
@@ -46,7 +49,8 @@ const BID_SUBJECT_LABELS: Record<string, string> = {
  * 枚举值中文映射表 - 资质要求类型
  */
 const QUALIFICATION_REQUIREMENT_LABELS = {
-  option1: "独立法人资格，持有有效的营业执照、基本账户开户许可证或基本存款账户信息表。",
+  option1:
+    "独立法人资格，持有有效的营业执照、基本账户开户许可证或基本存款账户信息表。",
   option3: "无",
 } as const;
 
@@ -75,6 +79,35 @@ const EVALUATION_METHOD_LABELS = {
 } as const;
 
 /**
+ * 评标方法描述映射表
+ */
+const EVALUATION_METHOD_DESCRIPTIONS = {
+  comprehensive:
+    "综合评分法。评标委员会对满足招标文件全部实质性的投标人，根据本章规定的评分标准进行打分，并按得分由高到低的顺序推荐中标候选人。",
+  "lowest-price":
+    "经评审的最低投标价法。评标委员会对满足招标文件实质性要求的投标文件，按照经评审的投标价由低到高的顺序推荐中标候选人。",
+} as const;
+
+/**
+ * 评标汇总排序映射表
+ */
+const EVALUATION_SUMMARY_RANKING = {
+  comprehensive:
+    "综合评分法：评标结果按评审后得分由高到低顺序排列。得分相同的，按投标报价由低到高顺序排列。综合评分相等时，以投标报价低的优先；投标报价也相等的，以技术得分高的优先；若技术得分也相等，以财务评审中近一年的净资产高的优先原则。",
+  "lowest-price":
+    "最低评标价法：评标结果按投标报价由低到高顺序排列。投标报价相同的，评标委员会按照财务评审中近一年的净资产高的优先原则。",
+} as const;
+
+/**
+ * 详细评审映射表
+ */
+const DETAILED_EVALUATION = {
+  comprehensive:
+    "综合评分法：分为投标报价评审、商务评审、技术评审（得分四舍五入保留两位小数）。",
+  "lowest-price": "最低评标价法：无。",
+} as const;
+
+/**
  * 枚举值中文映射表 - 资格审查方式
  */
 const QUALIFICATION_METHOD_LABELS = {
@@ -87,7 +120,8 @@ const QUALIFICATION_METHOD_LABELS = {
  */
 const FINANCIAL_STATUS_REQUIREMENT_LABELS = {
   "not-applicable": "不适用",
-  "applicable-one-year": "投标人应提供经会计事务所或审计机构审计的上一年度财务报表",
+  "applicable-one-year":
+    "投标人应提供经会计事务所或审计机构审计的上一年度财务报表",
 } as const;
 
 /**
@@ -169,9 +203,7 @@ const NO_NEGATIVE_DEVIATION_LABELS: Record<string, string> = {
  * @param timestamp 时间戳
  * @returns 格式化后的日期字符串（如：2024年1月1日）
  */
-export const formatDateToChinese = (
-  timestamp: number | null,
-): string => {
+export const formatDateToChinese = (timestamp: number | null): string => {
   if (!timestamp) {
     return "";
   }
@@ -183,15 +215,32 @@ export const formatDateToChinese = (
 };
 
 /**
- * 格式化金额为万元字符串
- * @param amount 金额（万元）
+ * 格式化日期时间为中文格式（精确到小时）
+ * @param timestamp 时间戳
+ * @returns 格式化后的日期时间字符串（如：2024年1月1日9时）
+ */
+export const formatDateTimeToChinese = (timestamp: number | null): string => {
+  if (!timestamp) {
+    return "";
+  }
+  const date = new Date(timestamp);
+  const year = date.getFullYear();
+  const month = date.getMonth() + 1;
+  const day = date.getDate();
+  const hour = date.getHours();
+  return `${year}年${month}月${day}日${hour}时`;
+};
+
+/**
+ * 格式化金额为元字符串
+ * @param amount 金额（元）
  * @returns 格式化后的金额字符串
  */
 export const formatAmount = (amount: number | null): string => {
   if (amount == null) {
     return "";
   }
-  return `${amount.toFixed(2)}万元`;
+  return `${amount.toFixed(2)}元`;
 };
 
 /**
@@ -207,8 +256,7 @@ export const transformFormDataToTemplateData = (
   // ========== 构建资质要求文本 ==========
   let qualificationRequirement = "";
   if (basicInfo.qualificationRequirementType === "option2") {
-    qualificationRequirement =
-      basicInfo.qualificationRequirementOther || "无";
+    qualificationRequirement = basicInfo.qualificationRequirementOther || "无";
   } else {
     qualificationRequirement =
       QUALIFICATION_REQUIREMENT_LABELS[
@@ -270,8 +318,7 @@ export const transformFormDataToTemplateData = (
   // ========== 构建财务状况要求文本 ==========
   let financialStatusRequirement = "";
   if (
-    bidderInstructions.financialStatusRequirement ===
-    "applicable-recent-years"
+    bidderInstructions.financialStatusRequirement === "applicable-recent-years"
   ) {
     financialStatusRequirement = `适用：投标人应递交近${bidderInstructions.financialReportYears || 1}年度经会计事务所或审计机构审计的财务报表`;
   } else {
@@ -362,7 +409,7 @@ export const transformFormDataToTemplateData = (
   let bidDocumentFee = "";
   if (bidderInstructions.requireBidDocumentFee === true) {
     const amount = bidderInstructions.bidDocumentFeeAmount;
-    bidDocumentFee = `要求，人民币${amount?.toFixed(2) || 0}元整`;
+    bidDocumentFee = `要求，人民币${amount?.toFixed(2) || 0}元`;
     const forms =
       bidderInstructions.bidDocumentFeeForms
         .map((f) => (f === "bank-transfer" ? "银行现汇" : "现金缴纳"))
@@ -370,6 +417,31 @@ export const transformFormDataToTemplateData = (
     bidDocumentFee += `，形式：${forms}`;
   } else {
     bidDocumentFee = "不要求";
+  }
+
+  // ========== 构建招标费用缴纳情况文本 ==========
+  const bidFeePaymentStatusParts: string[] = [];
+  if (bidderInstructions.requireBidBond === true) {
+    bidFeePaymentStatusParts.push("保证金缴纳");
+  }
+  if (bidderInstructions.requireBidDocumentFee === true) {
+    bidFeePaymentStatusParts.push("按要求进行网上投标和标书费");
+  }
+  const bidFeePaymentStatus =
+    bidFeePaymentStatusParts.length > 0
+      ? bidFeePaymentStatusParts.join("，")
+      : "无";
+
+  // ========== 构建投标报名信息文本 ==========
+  let bidRegistrationInfo = "";
+  if (basicInfo.bidRegistrationType === "datetime-range") {
+    const startTime = formatDateTimeToChinese(
+      basicInfo.bidRegistrationStartTime,
+    );
+    const endTime = formatDateTimeToChinese(basicInfo.bidRegistrationEndTime);
+    bidRegistrationInfo = `${startTime}至${endTime}(北京时间，下同)`;
+  } else {
+    bidRegistrationInfo = "报名开始和报名截止时间（详见五矿采购平台）";
   }
 
   // ========== 转换评分表数据 ==========
@@ -381,18 +453,27 @@ export const transformFormDataToTemplateData = (
       scoringStandard: string;
     }>,
   ): IScoringItemData[] => {
-    return items.map((item) => ({
-      index: item.index,
+    return items.map((item, idx) => ({
+      index: idx + 1, // 从1开始的序号
+      id: item.index, // 原时间戳作为 id
       itemName: item.itemName || "",
       score: item.score?.toString() || "",
       scoringStandard: item.scoringStandard || "",
     }));
   };
 
+  // ========== 计算评分表总分 ==========
+  const calculateScoreTotal = (items: IScoringItemData[]): string => {
+    return items
+      .reduce((sum, item) => sum + (parseFloat(item.score) || 0), 0)
+      .toString();
+  };
+
   return {
     // ============ 基础信息 ============
     // 招标主体需要将 value 转换为 label
-    bidSubject: BID_SUBJECT_LABELS[basicInfo.bidSubject] || basicInfo.bidSubject,
+    bidSubject:
+      BID_SUBJECT_LABELS[basicInfo.bidSubject] || basicInfo.bidSubject,
     projectName: basicInfo.projectName,
     bidNumber: basicInfo.bidNumber,
     coverDate: formatDateToChinese(basicInfo.coverDate),
@@ -410,12 +491,19 @@ export const transformFormDataToTemplateData = (
     contactPerson: basicInfo.contactPerson,
     contactPhone: basicInfo.contactPhone,
     contactEmail: basicInfo.contactEmail,
+    bidRegistrationInfo,
 
     // ============ 投标人须知 ============
     bidSectionCount:
       (bidderInstructions.bidSectionCount ?? 1).toString() + "个",
     evaluationMethod:
       EVALUATION_METHOD_LABELS[bidderInstructions.evaluationMethodType],
+    evaluationMethodDescription:
+      EVALUATION_METHOD_DESCRIPTIONS[bidderInstructions.evaluationMethodType],
+    evaluationSummaryRanking:
+      EVALUATION_SUMMARY_RANKING[bidderInstructions.evaluationMethodType],
+    detailedEvaluation:
+      DETAILED_EVALUATION[bidderInstructions.evaluationMethodType],
     bidBondRequirement,
     qualificationMethod:
       QUALIFICATION_METHOD_LABELS[bidderInstructions.qualificationMethod],
@@ -429,18 +517,37 @@ export const transformFormDataToTemplateData = (
       ALLOW_ALTERNATIVE_BID_LABELS[
         bidderInstructions.allowAlternativeBidProposal
       ],
-    recommendedCandidateCount:
-      (bidderInstructions.recommendedCandidateCount ?? 1).toString() + "人",
+    recommendedCandidateCount: (
+      bidderInstructions.recommendedCandidateCount ?? 1
+    ).toString(),
     performanceBondRequirement,
     noNegativeDeviationItems,
     maxBidPrice,
     bidDocumentFee,
+    bidFeePaymentStatus,
     abortBidWhenOverBudget:
       bidderInstructions.abortBidWhenOverBudget === "yes" ? "是" : "否",
     isSmallMediumEnterprise:
       IS_SMALL_MEDIUM_ENTERPRISE_LABELS[
         bidderInstructions.isSmallMediumEnterprise
       ],
+
+    // ============ 综合评分法总分 ============
+    commercialScoreTotal: comprehensiveScoring
+      ? calculateScoreTotal(
+          transformScoringItems(comprehensiveScoring.commercialScoring.items),
+        )
+      : "0",
+    technicalScoreTotal: comprehensiveScoring
+      ? calculateScoreTotal(
+          transformScoringItems(comprehensiveScoring.technicalScoring.items),
+        )
+      : "0",
+    priceScoreTotal: comprehensiveScoring
+      ? calculateScoreTotal(
+          transformScoringItems(comprehensiveScoring.priceScoring.items),
+        )
+      : "0",
 
     // ============ 综合评分法 ============
     commercialScoringItems: comprehensiveScoring
@@ -512,8 +619,7 @@ export const exportWordDocument = (
 
         resolve({ success: true });
       } catch (err) {
-        const errorMessage =
-          err instanceof Error ? err.message : String(err);
+        const errorMessage = err instanceof Error ? err.message : String(err);
         console.error("Word 导出失败:", err);
         resolve({ success: false, error: errorMessage });
       }
@@ -580,8 +686,7 @@ export const exportWordDocumentWithProgress = (
         onProgress("导出完成");
         resolve({ success: true });
       } catch (err) {
-        const errorMessage =
-          err instanceof Error ? err.message : String(err);
+        const errorMessage = err instanceof Error ? err.message : String(err);
         console.error("Word 导出失败:", err);
         resolve({ success: false, error: errorMessage });
       }

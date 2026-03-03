@@ -128,6 +128,9 @@ export const createEmptyFormData = (): IBiddingFormData => ({
     contactPerson: "",
     contactPhone: "",
     contactEmail: "",
+    bidRegistrationType: "platform",
+    bidRegistrationStartTime: null,
+    bidRegistrationEndTime: null,
   },
   bidderInstructions: {
     bidSectionCount: null,

@@ -7,8 +7,10 @@
  * 评分项数据接口（用于 Word 导出）
  */
 export interface IScoringItemData {
-  /** 序号 */
+  /** 序号（从1开始的整数） */
   index: number;
+  /** 唯一标识（时间戳） */
+  id: number;
   /** 指标分项名称 */
   itemName: string;
   /** 分值 */
@@ -59,12 +61,16 @@ export interface IWordTemplateData {
   contactPhone: string;
   /** 联系邮箱 */
   contactEmail: string;
+  /** 投标报名说明 */
+  bidRegistrationInfo: string;
 
   // ============ 投标人须知 ============
   /** 标段数量 */
   bidSectionCount: string;
   /** 评标办法（"综合评分法"/"经评审的最低价中标法"） */
   evaluationMethod: string;
+  /** 评标方法描述（根据评标办法生成的完整描述） */
+  evaluationMethodDescription: string;
   /** 投标保证金要求 */
   bidBondRequirement: string;
   /** 资格审查方式（"资格后审"/"资格预审"） */
@@ -87,10 +93,24 @@ export interface IWordTemplateData {
   maxBidPrice: string;
   /** 标书费 */
   bidDocumentFee: string;
+  /** 招标费用缴纳情况（根据投标保证金和标书费要求组合显示） */
+  bidFeePaymentStatus: string;
+  /** 评标汇总排序（根据评标办法生成的排序规则描述） */
+  evaluationSummaryRanking: string;
+  /** 详细评审（根据评标办法生成的评审内容描述） */
+  detailedEvaluation: string;
   /** 中标价高于预算金额时是否废标（"是"/"否"） */
   abortBidWhenOverBudget: string;
   /** 投标人是否属于中小企业（"是"/"否"） */
   isSmallMediumEnterprise: string;
+
+  // ============ 综合评分法总分 ============
+  /** 商务评分值（所有商务评分项的分数总和） */
+  commercialScoreTotal: string;
+  /** 技术评分值（所有技术评分项的分数总和） */
+  technicalScoreTotal: string;
+  /** 价格评分值（所有价格评分项的分数总和） */
+  priceScoreTotal: string;
 
   // ============ 综合评分法（可选） ============
   /** 商务评分表项列表 */

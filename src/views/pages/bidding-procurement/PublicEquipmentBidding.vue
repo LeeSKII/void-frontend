@@ -399,6 +399,64 @@
             </n-form-item>
           </div>
 
+          <!-- 投标报名及招标文件的获取 -->
+          <h4 class="public-bidding__subsection-title">
+            投标报名及招标文件的获取
+          </h4>
+          <div class="public-bidding__form-grid">
+            <n-form-item
+              label="投标报名"
+              path="basicInfo.bidRegistrationType"
+              class="public-bidding__form-grid__item--full"
+            >
+              <n-radio-group
+                v-model:value="formData.basicInfo.bidRegistrationType"
+                name="bidRegistrationType"
+              >
+                <n-radio value="datetime-range">
+                  <span class="inline-radio-label">指定时间</span>
+                </n-radio>
+                <n-radio value="platform">
+                  <span class="inline-radio-label"
+                    >报名开始和报名截止时间（详见五矿采购平台）</span
+                  >
+                </n-radio>
+              </n-radio-group>
+            </n-form-item>
+
+            <!-- 指定时间范围的输入区域 -->
+            <div
+              v-if="formData.basicInfo.bidRegistrationType === 'datetime-range'"
+              class="bid-registration-datetime__inputs"
+            >
+              <n-form-item
+                label="报名开始时间"
+                path="basicInfo.bidRegistrationStartTime"
+              >
+                <n-date-picker
+                  v-model:value="formData.basicInfo.bidRegistrationStartTime"
+                  type="datetime"
+                  placeholder="请选择开始时间"
+                  format="yyyy年MM月dd日HH时"
+                  style="width: 100%"
+                />
+              </n-form-item>
+
+              <n-form-item
+                label="报名截止时间"
+                path="basicInfo.bidRegistrationEndTime"
+              >
+                <n-date-picker
+                  v-model:value="formData.basicInfo.bidRegistrationEndTime"
+                  type="datetime"
+                  placeholder="请选择截止时间"
+                  format="yyyy年MM月dd日HH时"
+                  style="width: 100%"
+                />
+              </n-form-item>
+            </div>
+          </div>
+
           <!-- 联系方式 -->
           <h3 class="public-bidding__section-title">联系方式</h3>
           <div class="public-bidding__form-grid">
@@ -485,7 +543,7 @@
             <!-- 保证金金额（要求时显示） -->
             <n-form-item
               v-if="formData.bidderInstructions.requireBidBond === true"
-              label="保证金金额（万元）"
+              label="保证金金额（元）"
               path="bidderInstructions.bidBondAmount"
             >
               <n-input-number
@@ -2230,5 +2288,17 @@ onBeforeUnmount(() => {
   font-weight: 550;
   color: #555;
   border-left: 3px solid #409eff;
+}
+
+/* 投标报名时间输入区域样式 */
+.bid-registration-datetime__inputs {
+  width: 100%;
+  padding: 16px;
+  margin-top: 8px;
+  background-color: #f9fafb;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 </style>

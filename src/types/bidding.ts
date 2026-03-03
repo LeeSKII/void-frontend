@@ -97,6 +97,12 @@ export interface IBasicInfo {
   contactPhone: string;
   /** 联系邮箱 */
   contactEmail: string;
+  /** 投标报名类型 */
+  bidRegistrationType: "datetime-range" | "platform";
+  /** 投标报名开始时间（时间戳） */
+  bidRegistrationStartTime: number | null;
+  /** 投标报名结束时间（时间戳） */
+  bidRegistrationEndTime: number | null;
 }
 
 /**
@@ -209,7 +215,7 @@ export interface IBidderInstructions {
   evaluationMethodType: "comprehensive" | "lowest-price";
   /** 是否要求投标保证金 */
   requireBidBond: boolean | null;
-  /** 保证金金额（万元） */
+  /** 保证金金额（元） */
   bidBondAmount: number | null;
   /** 保证金形式 */
   bidBondForms: ("bank-transfer" | "commitment-letter")[];
@@ -247,7 +253,7 @@ export interface IBidderInstructions {
   requirePerformanceBond: PerformanceBondRequirementType;
   /** 履约保证金形式（多选） */
   performanceBondForms: PerformanceBondFormType[];
-  /** 履约保证金的金额（万元） */
+  /** 履约保证金的金额（元） */
   performanceBondAmount: number | null;
   /** 出具保函的银行要求（多选） */
   bankGuaranteeRequirements: BankGuaranteeRequirementType[];
@@ -255,7 +261,7 @@ export interface IBidderInstructions {
   noNegativeDeviationItems: NoNegativeDeviationType[];
   /** 是否有最高投标限价 */
   hasMaxBidPrice: boolean | null;
-  /** 最高投标限价金额（万元） */
+  /** 最高投标限价金额（元） */
   maxBidPrice: number | null;
   /** 是否要求标书费 */
   requireBidDocumentFee: boolean | null;
