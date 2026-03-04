@@ -14,6 +14,7 @@ import type {
   IExportOptions,
   IExportResult,
   IScoringItemData,
+  IConformityReviewItemData,
 } from "@/types/bidding-export";
 
 /**
@@ -320,7 +321,11 @@ export const transformFormDataToTemplateData = (
   if (
     bidderInstructions.financialStatusRequirement === "applicable-recent-years"
   ) {
-    financialStatusRequirement = `适用：投标人应递交近${bidderInstructions.financialReportYears || 1}年度经会计事务所或审计机构审计的财务报表`;
+    financialStatusRequirement = `适用：投标人应递交近${bidderInstructions.financialReportYears || 1}年度经会计事务所或审计机构审计的财务报表。（注：从每年的1月1日至4月30日，如投标人无法提供上一年度财务报表资料，则可以再上一年度财务报表；从每年5月1日开始至12月31日，投标人应当提供上一年度财务报表。供应商的成立时间少于该规定年份的，应提供成立以来的财务报表）`;
+  } else if (
+    bidderInstructions.financialStatusRequirement === "applicable-one-year"
+  ) {
+    financialStatusRequirement = `适用：投标人应提供经会计事务所或审计机构审计的上一年度财务报表。（注：供应商的成立时间少于该规定年份的，应提供成立以来的财务报表）`;
   } else {
     financialStatusRequirement =
       FINANCIAL_STATUS_REQUIREMENT_LABELS[
@@ -462,6 +467,22 @@ export const transformFormDataToTemplateData = (
     }));
   };
 
+  // ========== 转换符合性评审表数据 ==========
+  const transformConformityReviewItems = (
+    items: Array<{
+      index: number;
+      reviewFactor: string;
+      reviewStandard: string;
+    }>,
+  ): IConformityReviewItemData[] => {
+    return items.map((item, idx) => ({
+      index: idx + 1, // 从1开始的序号
+      id: item.index, // 原时间戳作为 id
+      reviewFactor: item.reviewFactor || "",
+      reviewStandard: item.reviewStandard || "",
+    }));
+  };
+
   // ========== 计算评分表总分 ==========
   const calculateScoreTotal = (items: IScoringItemData[]): string => {
     return items
@@ -558,6 +579,11 @@ export const transformFormDataToTemplateData = (
       : [],
     priceScoringItems: comprehensiveScoring
       ? transformScoringItems(comprehensiveScoring.priceScoring.items)
+      : [],
+
+    // ============ 符合性评审表-资格评审 ============
+    conformityReviewItems: bidderInstructions.conformityReviewItems
+      ? transformConformityReviewItems(bidderInstructions.conformityReviewItems)
       : [],
   };
 };

@@ -1095,6 +1095,72 @@
               </n-radio-group>
             </n-form-item>
           </div>
+
+          <!-- 符合性评审表-资格评审 -->
+          <h3 class="public-bidding__section-title">符合性评审表-资格评审</h3>
+          <div class="public-bidding__scoring-table-wrapper">
+            <table class="public-bidding__scoring-table public-bidding__scoring-table--conformity">
+              <thead>
+                <tr>
+                  <th>序号</th>
+                  <th>评审因素</th>
+                  <th>评审标准</th>
+                  <th class="scoring-table__action-col">操作</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  v-for="
+                    (item, index) in formData.bidderInstructions
+                      .conformityReviewItems
+                  "
+                  :key="item.index"
+                >
+                  <td>{{ index + 1 }}</td>
+                  <td>
+                    <n-input
+                      v-model:value="item.reviewFactor"
+                      placeholder="请输入评审因素"
+                    />
+                  </td>
+                  <td>
+                    <n-input
+                      v-model:value="item.reviewStandard"
+                      placeholder="请输入评审标准"
+                    />
+                  </td>
+                  <td class="scoring-table__action-col">
+                    <n-button
+                      size="small"
+                      type="error"
+                      @click="removeConformityReviewRow(index)"
+                    >
+                      删除
+                    </n-button>
+                  </td>
+                </tr>
+                <tr
+                  v-if="
+                    !formData.bidderInstructions.conformityReviewItems ||
+                    formData.bidderInstructions.conformityReviewItems
+                      .length === 0
+                  "
+                >
+                  <td colspan="4" class="scoring-table__empty-row">
+                    暂无数据，请点击下方按钮添加
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <n-button
+              @click="addConformityReviewRow"
+              type="primary"
+              dashed
+              class="public-bidding__add-row-btn"
+            >
+              + 增加行
+            </n-button>
+          </div>
         </div>
 
         <!-- 步骤三：综合评分法 -->
@@ -1758,6 +1824,40 @@ const removePriceRow = (index: number) => {
 };
 
 /**
+ * 符合性评审表 - 增加行
+ */
+const addConformityReviewRow = () => {
+  if (!formData.value.bidderInstructions.conformityReviewItems) {
+    formData.value.bidderInstructions.conformityReviewItems = [];
+  }
+  formData.value.bidderInstructions.conformityReviewItems.push({
+    index: Date.now(),
+    reviewFactor: "",
+    reviewStandard: "",
+  });
+};
+
+/**
+ * 符合性评审表 - 删除行
+ * @param index 行索引
+ */
+const removeConformityReviewRow = (index: number) => {
+  dialog.warning({
+    title: "确认删除",
+    content: "确定要删除该评审项吗？",
+    positiveText: "确定",
+    negativeText: "取消",
+    onPositiveClick: () => {
+      formData.value.bidderInstructions.conformityReviewItems?.splice(
+        index,
+        1,
+      );
+      message.success("删除成功");
+    },
+  });
+};
+
+/**
  * 综合评分法 - 计算总分值
  * @param tableType 表格类型（commercial/technical/price）
  * @returns 总分值
@@ -2223,6 +2323,14 @@ onBeforeUnmount(() => {
 .public-bidding__scoring-table--price th:nth-child(3),
 .public-bidding__scoring-table--price td:nth-child(3) {
   width: auto;
+}
+
+/* 符合性评审表列宽（4列表格）- 评审因素和评审标准等宽 */
+.public-bidding__scoring-table--conformity th:nth-child(2),
+.public-bidding__scoring-table--conformity td:nth-child(2),
+.public-bidding__scoring-table--conformity th:nth-child(3),
+.public-bidding__scoring-table--conformity td:nth-child(3) {
+  width: 50%;
 }
 
 /* 增加行按钮 */
