@@ -50,6 +50,159 @@
 - **命名规范**：使用 BEM 命名规范或 kebab-case
 - **响应式设计**：移动端优先，使用媒体查询适配不同屏幕
 
+### 图标规范
+
+项目统一使用 Naive UI 的 `n-icon` 组件配合 `@vicons/ionicons5` 图标库，**禁止使用任何自定义 SVG 图标代码**。
+
+#### 图标库依赖
+
+```json
+{
+  "devDependencies": {
+    "@vicons/ionicons5": "^0.13.0"
+  }
+}
+```
+
+#### 基本用法
+
+```vue
+<template>
+  <!-- 导航栏图标按钮 -->
+  <n-button circle>
+    <template #icon>
+      <n-icon>
+        <HomeOutline />
+      </n-icon>
+    </template>
+  </n-button>
+
+  <!-- 独立图标显示 -->
+  <n-icon size="24" color="#18a058">
+    <CheckmarkCircle />
+  </n-icon>
+
+  <!-- 悬浮按钮图标 -->
+  <n-float-button>
+    <n-icon size="30">
+      <Library />
+    </n-icon>
+  </n-float-button>
+</template>
+
+<script setup lang="ts">
+import { HomeOutline, CheckmarkCircle, Library } from "@vicons/ionicons5";
+</script>
+```
+
+#### 动态图标使用
+
+```vue
+<template>
+  <n-icon :component="iconComponent" :size="size" />
+</template>
+
+<script setup lang="ts">
+import { computed } from "vue";
+import {
+  CheckmarkCircle,
+  CloseCircle,
+  WarningOutline,
+} from "@vicons/ionicons5";
+
+interface Props {
+  type: "success" | "error" | "warning";
+  size?: number;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  size: 24,
+});
+
+const iconMap = {
+  success: CheckmarkCircle,
+  error: CloseCircle,
+  warning: WarningOutline,
+};
+
+const iconComponent = computed(() => iconMap[props.type]);
+</script>
+```
+
+#### 常用图标参考
+
+| 图标名称 | 说明 | 导入路径 |
+|---------|------|----------|
+| `HomeOutline` | 首页 | `@vicons/ionicons5` |
+| `SettingsOutline` | 设置 | `@vicons/ionicons5` |
+| `PersonOutline` | 用户 | `@vicons/ionicons5` |
+| `SearchOutline` | 搜索 | `@vicons/ionicons5` |
+| `AddOutline` / `Add` | 添加 | `@vicons/ionicons5` |
+| `TrashOutline` | 删除 | `@vicons/ionicons5` |
+| `CreateOutline` / `Edit` | 编辑 | `@vicons/ionicons5` |
+| `CheckmarkCircle` | 成功 | `@vicons/ionicons5` |
+| `CloseCircle` | 失败/关闭 | `@vicons/ionicons5` |
+| `WarningOutline` | 警告 | `@vicons/ionicons5` |
+| `InformationCircle` | 信息 | `@vicons/ionicons5` |
+| `Library` | 历史/库 | `@vicons/ionicons5` |
+| `ChevronBackOutline` | 返回 | `@vicons/ionicons5` |
+| `ChevronForwardOutline` | 前进 | `@vicons/ionicons5` |
+
+> 💡 **提示**：更多图标请访问 [Ionicons 官方文档](https://ionic.io/ionicons) 或 [Naive UI 图标文档](https://www.naiveui.com/zh-CN/os-theme/components/icon) 查阅。
+
+#### 禁止事项
+
+```vue
+<!-- ❌ 禁止：内联 SVG 代码 -->
+<template>
+  <div>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+      <path d="M..."></path>
+    </svg>
+  </div>
+</template>
+
+<!-- ❌ 禁止：使用其他图标库 -->
+<script setup>
+import { SomeIcon } from "some-other-icon-library";
+</script>
+
+<!-- ✅ 正确：使用 n-icon + @vicons/ionicons5 -->
+<template>
+  <n-icon size="24">
+    <HomeOutline />
+  </n-icon>
+</template>
+
+<script setup lang="ts">
+import { HomeOutline } from "@vicons/ionicons5";
+</script>
+```
+
+#### TypeScript 类型支持
+
+```typescript
+import type { Component } from "vue";
+import { Icon } from "@vicons/ionicons5";
+
+// 图标组件类型
+interface IconProps {
+  icon: Component;
+  size?: number | string;
+  color?: string;
+}
+
+// 动态图标映射类型
+type IconType = "success" | "error" | "warning" | "info";
+
+const iconMap: Record<IconType, Component> = {
+  success: CheckmarkCircle,
+  error: CloseCircle,
+  warning: WarningOutline,
+  info: InformationCircle,
+};
+```
+
 ### 性能优化约定
 
 - **懒加载**：路由和组件使用动态导入
@@ -1059,6 +1212,8 @@ const showMessage = () => {
 
 - 不得使用任何除项目引用的第三方库，例如 jQuery、Lodash 等
 - 不得使用任何除项目引用的第三方 UI 库，例如 Ant Design、Element UI 等
+- **不得使用除 `@vicons/ionicons5` 之外的任何其他图标库（如 `@iconify/vue`、`vue-svg-icon` 等）**
+- **不得在组件中直接编写内联 SVG 代码**
 - 不得随意添加新的依赖，必须经过团队评估和批准
 - 不得使用已废弃或有安全漏洞的依赖包
 
@@ -1070,6 +1225,7 @@ const showMessage = () => {
 - 不得使用 `eval()` 或 `Function()` 构造函数等危险函数
 - 不得在模板中编写复杂逻辑，应将逻辑移至计算属性或方法
 - 不得使用硬编码的魔法数字或字符串，应定义为常量
+- **不得使用任何自定义 SVG 图标代码，必须使用 `n-icon` 组件配合 `@vicons/ionicons5` 图标库**
 
 ### 性能相关禁止事项
 
