@@ -41,7 +41,7 @@ export type AgentBidType = "accept" | "reject";
 /**
  * 问题严重程度类型
  */
-export type IssueSeverityType = "major" | "serious" | "all";
+export type IssueSeverityType = "major" | "serious";
 export interface IBasicInfo {
   /** 招标主体（公司或子公司） */
   bidSubject: string;
@@ -88,7 +88,7 @@ export interface IBasicInfo {
   /** 本次招标是否接受代理商投标 */
   acceptAgentBid: AgentBidType;
   /** 未在招标人或上级单位发生过选择项 */
-  issueSelectionType: IssueSeverityType;
+  issueSelectionType: IssueSeverityType[];
   /** 质量问题说明 */
   qualityIssueNote: string;
   /** 联系人 */

@@ -44,7 +44,7 @@ const createMockFormData = (baseData: {
     jointBidMaxMembers: null,
     jointBidQualificationRequirement: "",
     acceptAgentBid: "accept",
-    issueSelectionType: "all",
+    issueSelectionType: ["major", "serious"],
     qualityIssueNote: "以招标人或上级单位供应商问题记录库为准",
     contactPerson: "张经理",
     contactPhone: "010-12345678",
