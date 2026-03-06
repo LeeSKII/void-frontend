@@ -1480,6 +1480,15 @@
       @positive-click="handleRestoreDraft"
       @negative-click="handleDiscardDraft"
     />
+
+    <!-- 历史项目悬浮按钮 -->
+    <HistoryFloatButton v-model="historyDrawerVisible" />
+
+    <!-- 历史项目抽屉 -->
+    <HistoryProjectDrawer
+      v-model="historyDrawerVisible"
+      @select-project="handleCloneProject"
+    />
   </div>
 </template>
 
@@ -1498,7 +1507,9 @@ import {
 } from "@/utils/business/bidding";
 import { exportWordDocumentWithProgress } from "@/utils/business/bidding-export";
 import { getTodayTimestamp } from "@/utils/common/date";
-import type { IBiddingFormData, ISelectOption } from "@/types/bidding";
+import type { IBiddingFormData, ISelectOption, IHistoryProject } from "@/types/bidding";
+import HistoryFloatButton from "@/components/business/HistoryFloatButton.vue";
+import HistoryProjectDrawer from "@/components/business/HistoryProjectDrawer.vue";
 
 /**
  * 消息提示
@@ -1534,6 +1545,11 @@ const exporting = ref(false);
  */
 const showDraftRestoreModal = ref(false);
 const lastSavedTime = ref("");
+
+/**
+ * 历史项目抽屉相关
+ */
+const historyDrawerVisible = ref(false);
 
 /**
  * 表单数据
@@ -1911,6 +1927,33 @@ watch(
     }
   },
 );
+
+/**
+ * 克隆历史项目
+ */
+const handleCloneProject = (project: IHistoryProject) => {
+  dialog.info({
+    title: "确认克隆项目",
+    content: `确定要克隆项目「${project.projectName}」吗？当前表单数据将被覆盖。`,
+    positiveText: "确定克隆",
+    negativeText: "取消",
+    onPositiveClick: () => {
+      // 深拷贝表单数据
+      formData.value = JSON.parse(JSON.stringify(project.formData));
+      // 修改项目名称为副本
+      formData.value.basicInfo.projectName = `${project.formData.basicInfo.projectName} (副本)`;
+      // 清空招标编号，作为新项目
+      formData.value.basicInfo.bidNumber = "";
+      // 重置到第一步
+      currentStep.value = 1;
+      // 关闭抽屉
+      historyDrawerVisible.value = false;
+      message.success("项目已克隆，请修改相关信息");
+      // 保存草稿
+      saveDraft();
+    },
+  });
+};
 
 /**
  * 组件挂载

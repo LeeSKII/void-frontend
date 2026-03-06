@@ -20,6 +20,9 @@ importers:
       docxtemplater:
         specifier: ^3.68.2
         version: 3.68.2
+      docxtemplater-image-module-free:
+        specifier: ^1.1.1
+        version: 1.1.1
       echarts:
         specifier: ^6.0.0
         version: 6.0.0
@@ -36,9 +39,15 @@ importers:
         specifier: ^4.6.3
         version: 4.6.4(vue@3.5.29(typescript@5.9.3))
     devDependencies:
+      '@types/file-saver':
+        specifier: ^2.0.7
+        version: 2.0.7
       '@types/node':
         specifier: ^24.10.0
         version: 24.10.13
+      '@vicons/ionicons5':
+        specifier: ^0.13.0
+        version: 0.13.0
       '@vitejs/plugin-vue':
         specifier: ^6.0.1
         version: 6.0.4(vite@7.3.1(@types/node@24.10.13))(vue@3.5.29(typescript@5.9.3))
@@ -402,6 +411,9 @@ packages:
   '@types/estree@1.0.8':
     resolution: {integrity: sha512-dWHzHa2WqEXI/O1E9OjrocMTKJl2mSrEolh1Iomrv6U+JuNwaHXsXx9bLu5gG7BUWFIN0skIQJQ/L1rIex4X6w==}
 
+  '@types/file-saver@2.0.7':
+    resolution: {integrity: sha512-dNKVfHd/jk0SkR/exKGj2ggkB45MAkzvWCaqLUUgkyjITkGNzH8H+yUwr+BLJUBjZOe9w8X3wgmXhZDRg1ED6A==}
+
   '@types/katex@0.16.8':
     resolution: {integrity: sha512-trgaNyfU+Xh2Tc+ABIb44a5AYUpicB3uwirOioeOkNPPbmgRNtcWyDeeFRzjPZENO9Vq8gvVqfhaaXWLlevVwg==}
 
@@ -413,6 +425,9 @@ packages:
 
   '@types/node@24.10.13':
     resolution: {integrity: sha512-oH72nZRfDv9lADUBSo104Aq7gPHpQZc4BTx38r9xf9pg5LfP6EzSyH2n7qFmmxRQXh7YlUXODcYsg6PuTDSxGg==}
+
+  '@vicons/ionicons5@0.13.0':
+    resolution: {integrity: sha512-zvZKBPjEXKN7AXNo2Na2uy+nvuv6SP4KAMQxpKL2vfHMj0fSvuw7JZcOPCjQC3e7ayssKnaoFVAhbYcW6v41qQ==}
 
   '@vitejs/plugin-vue@6.0.4':
     resolution: {integrity: sha512-uM5iXipgYIn13UUQCZNdWkYk+sysBeA97d5mHsAoAt1u/wpN3+zxOmsVJWosuzX+IMGRzeYUNytztrYznboIkQ==}
@@ -550,6 +565,9 @@ packages:
 
   dingtalk-jsapi@3.2.7:
     resolution: {integrity: sha512-nljKTH1QDkLwykWywfgjtVpZauwFFtf4Qh+iNHva6mp9qNipR2LmMUOlgnRCVJF7IYykgJ+K4V0qgv2oU5V9eg==}
+
+  docxtemplater-image-module-free@1.1.1:
+    resolution: {integrity: sha512-aWOzVQN7ggDYjfoy3pTTNrcrZ7/CJrQcI9cT+hmyHE6nRLR67nt5yPFPe9hm9VWbfYIED2fi+3itOnF0TE/RWQ==}
 
   docxtemplater@3.68.2:
     resolution: {integrity: sha512-I6sWuB9kH1etjhGrAJkFKlzidf8ng12m4ZqY2iOpZmY38Z+Xkumn3IcagoFJmjnIxuDuExI1ZvIMrUa9gy1ZAQ==}
@@ -909,6 +927,11 @@ packages:
   webpack-virtual-modules@0.6.2:
     resolution: {integrity: sha512-66/V2i5hQanC51vBQKPH4aI8NMAcBW59FVBs+rC7eGHupMyfn34q7rZIE+ETlJ+XTevqfUhVVBgSUNSW2flEUQ==}
 
+  xmldom@0.1.31:
+    resolution: {integrity: sha512-yS2uJflVQs6n+CyjHoaBmVSqIDevTAWrzMmjG1Gc7h1qQ7uVozNhEPJAwZXWyGQ/Gafo3fCwrcaokezLPupVyQ==}
+    engines: {node: '>=0.1'}
+    deprecated: Deprecated due to CVE-2021-21366 resolved in 0.5.0
+
   zrender@6.0.0:
     resolution: {integrity: sha512-41dFXEEXuJpNecuUQq6JlbybmnHaqqpGlbH1yxnA5V9MMP4SbohSVZsJIwz+zdjQXSSlR1Vc34EgH1zxyTDvhg==}
 
@@ -1115,6 +1138,8 @@ snapshots:
 
   '@types/estree@1.0.8': {}
 
+  '@types/file-saver@2.0.7': {}
+
   '@types/katex@0.16.8': {}
 
   '@types/lodash-es@4.17.12':
@@ -1126,6 +1151,8 @@ snapshots:
   '@types/node@24.10.13':
     dependencies:
       undici-types: 7.16.0
+
+  '@vicons/ionicons5@0.13.0': {}
 
   '@vitejs/plugin-vue@6.0.4(vite@7.3.1(@types/node@24.10.13))(vue@3.5.29(typescript@5.9.3))':
     dependencies:
@@ -1277,6 +1304,10 @@ snapshots:
   dingtalk-jsapi@3.2.7:
     dependencies:
       promise-polyfill: 7.1.2
+
+  docxtemplater-image-module-free@1.1.1:
+    dependencies:
+      xmldom: 0.1.31
 
   docxtemplater@3.68.2:
     dependencies:
@@ -1671,6 +1702,8 @@ snapshots:
       vue: 3.5.29(typescript@5.9.3)
 
   webpack-virtual-modules@0.6.2: {}
+
+  xmldom@0.1.31: {}
 
   zrender@6.0.0:
     dependencies:

@@ -364,3 +364,40 @@ export interface IUploadResponse extends IApiResponse {
     url: string;
   };
 }
+
+/**
+ * 历史项目项接口
+ */
+export interface IHistoryProject {
+  /** 项目唯一标识 */
+  id: string;
+  /** 招标主体 */
+  bidSubject: string;
+  /** 项目名称 */
+  projectName: string;
+  /** 招标编号 */
+  bidNumber: string;
+  /** 封面日期（时间戳） */
+  coverDate: number | null;
+  /** 采购设备名称 */
+  equipmentName: string;
+  /** 创建时间（时间戳） */
+  createdAt: number;
+  /** 完整表单数据 */
+  formData: IBiddingFormData;
+}
+
+/**
+ * 历史项目列表响应接口
+ */
+export interface IHistoryProjectListResponse {
+  /** 项目列表 */
+  projects: IHistoryProject[];
+  /** 总数 */
+  total: number;
+}
+
+/**
+ * 历史项目排序类型
+ */
+export type HistoryProjectSortType = "date" | "name" | "bidNumber";
