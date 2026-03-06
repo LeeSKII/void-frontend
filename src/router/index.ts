@@ -28,7 +28,7 @@ const routes: any[] = [
     path: "/bidding/public-bid",
     props: true,
     component: () =>
-      import("@/views/pages/bidding-procurement/PublicEquipmentBidding.vue"),
+      import("@/modules/bidding/views/PublicEquipmentBidding.vue"),
   },
   // 移动端路由配置，包含子路由
   {

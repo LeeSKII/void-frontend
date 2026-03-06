@@ -1,6 +1,6 @@
 /**
  * 招标采购 Word 导出工具函数
- * @module utils/business/bidding-export
+ * @module modules/bidding/services/export
  */
 
 import Docxtemplater from "docxtemplater";
@@ -8,14 +8,14 @@ import PizZip from "pizzip";
 import PizZipUtils from "pizzip/utils/index.js";
 import { saveAs } from "file-saver";
 import ImageModule from "docxtemplater-image-module-free";
-import type { IBiddingFormData } from "@/types/bidding";
+import type { IBiddingFormData } from "@/modules/bidding/types/form";
 import type {
   IWordTemplateData,
   IExportOptions,
   IExportResult,
   IScoringItemData,
   IConformityReviewItemData,
-} from "@/types/bidding-export";
+} from "@/modules/bidding/types/export";
 
 /**
  * 加载本地二进制文件

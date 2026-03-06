@@ -16,7 +16,7 @@
       <div class="public-bidding__fixed-actions">
         <n-space>
           <n-button type="success" @click="handleSubmit" :loading="submitting">
-            提交申请
+            提交
           </n-button>
           <n-button type="info" @click="handleExportWord" :loading="exporting">
             导出Word
@@ -1099,7 +1099,9 @@
           <!-- 符合性评审表-资格评审 -->
           <h3 class="public-bidding__section-title">符合性评审表-资格评审</h3>
           <div class="public-bidding__scoring-table-wrapper">
-            <table class="public-bidding__scoring-table public-bidding__scoring-table--conformity">
+            <table
+              class="public-bidding__scoring-table public-bidding__scoring-table--conformity"
+            >
               <thead>
                 <tr>
                   <th>序号</th>
@@ -1110,10 +1112,8 @@
               </thead>
               <tbody>
                 <tr
-                  v-for="
-                    (item, index) in formData.bidderInstructions
-                      .conformityReviewItems
-                  "
+                  v-for="(item, index) in formData.bidderInstructions
+                    .conformityReviewItems"
                   :key="item.index"
                 >
                   <td>{{ index + 1 }}</td>
@@ -1142,8 +1142,8 @@
                 <tr
                   v-if="
                     !formData.bidderInstructions.conformityReviewItems ||
-                    formData.bidderInstructions.conformityReviewItems
-                      .length === 0
+                    formData.bidderInstructions.conformityReviewItems.length ===
+                      0
                   "
                 >
                   <td colspan="4" class="scoring-table__empty-row">
@@ -1463,7 +1463,7 @@
     <!-- <div class="public-bidding__actions">
       <n-space>
         <n-button type="success" @click="handleSubmit" :loading="submitting">
-          提交申请
+          提交
         </n-button>
         <n-button @click="handleReset" type="warning">重置表单</n-button>
       </n-space>
@@ -1504,12 +1504,15 @@ import {
   getDraftSavedTime,
   submitBiddingForm,
   AUTO_SAVE_INTERVAL,
-} from "@/utils/business/bidding";
-import { exportWordDocumentWithProgress } from "@/utils/business/bidding-export";
+  exportWordDocumentWithProgress,
+} from "@/modules/bidding/services";
 import { getTodayTimestamp } from "@/utils/common/date";
-import type { IBiddingFormData, ISelectOption, IHistoryProject } from "@/types/bidding";
-import HistoryFloatButton from "@/components/business/HistoryFloatButton.vue";
-import HistoryProjectDrawer from "@/components/business/HistoryProjectDrawer.vue";
+import type {
+  IBiddingFormData,
+  ISelectOption,
+  IHistoryProject,
+} from "@/modules/bidding/types";
+import { HistoryFloatButton, HistoryProjectDrawer } from "@/modules/bidding/components";
 
 /**
  * 消息提示
@@ -1864,10 +1867,7 @@ const removeConformityReviewRow = (index: number) => {
     positiveText: "确定",
     negativeText: "取消",
     onPositiveClick: () => {
-      formData.value.bidderInstructions.conformityReviewItems?.splice(
-        index,
-        1,
-      );
+      formData.value.bidderInstructions.conformityReviewItems?.splice(index, 1);
       message.success("删除成功");
     },
   });
