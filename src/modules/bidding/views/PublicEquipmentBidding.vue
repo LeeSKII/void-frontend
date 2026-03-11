@@ -1967,6 +1967,26 @@ watch(
 );
 
 /**
+ * 监听问题严重程度变化
+ * 当勾选"严重"时，自动勾选"重大"（因为严重包含重大）
+ */
+watch(
+  () => formData.value.basicInfo.issueSelectionType,
+  (newValue) => {
+    if (!newValue) return;
+
+    const hasSerious = newValue.includes("serious");
+    const hasMajor = newValue.includes("major");
+
+    // 如果勾选了"严重"但未勾选"重大"，自动勾选"重大"
+    if (hasSerious && !hasMajor) {
+      formData.value.basicInfo.issueSelectionType = [...newValue, "major"];
+    }
+  },
+  { deep: true },
+);
+
+/**
  * 克隆历史项目
  */
 const handleCloneProject = (project: IHistoryProject) => {
