@@ -14,9 +14,9 @@ export type BidMethod = "public" | "invitation" | "competitive";
 export type ProcurementType = "goods" | "services" | "construction";
 
 /**
- * 资质要求类型
+ * 资质要求选项
  */
-export type QualificationRequirementType = "option1" | "option2" | "option3";
+export type QualificationRequirementOption = "option1" | "option2" | "option3";
 
 /**
  * 财务要求类型
@@ -63,8 +63,8 @@ export interface IBasicInfo {
   deliveryLocation: string;
   /** 招标范围 */
   bidScope: string;
-  /** 资质要求类型 */
-  qualificationRequirementType: QualificationRequirementType;
+  /** 资质要求类型（多选） */
+  qualificationRequirementType: QualificationRequirementOption[];
   /** 资质要求其他内容 */
   qualificationRequirementOther: string;
   /** 财务要求类型 */

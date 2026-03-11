@@ -256,14 +256,20 @@ export const transformFormDataToTemplateData = (
 
   // ========== 构建资质要求文本 ==========
   let qualificationRequirement = "";
-  if (basicInfo.qualificationRequirementType === "option2") {
-    qualificationRequirement = basicInfo.qualificationRequirementOther || "无";
-  } else {
-    qualificationRequirement =
-      QUALIFICATION_REQUIREMENT_LABELS[
-        basicInfo.qualificationRequirementType
-      ] || "";
+  const types = basicInfo.qualificationRequirementType || [];
+  const labels: string[] = [];
+
+  for (const type of types) {
+    if (type === "option2") {
+      if (basicInfo.qualificationRequirementOther) {
+        labels.push(basicInfo.qualificationRequirementOther);
+      }
+    } else if (type in QUALIFICATION_REQUIREMENT_LABELS) {
+      labels.push(QUALIFICATION_REQUIREMENT_LABELS[type as keyof typeof QUALIFICATION_REQUIREMENT_LABELS]);
+    }
   }
+
+  qualificationRequirement = labels.length > 0 ? labels.join("、") : "无";
 
   // ========== 构建财务要求文本 ==========
   let financialRequirement = "";

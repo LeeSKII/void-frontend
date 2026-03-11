@@ -189,32 +189,37 @@
               class="public-bidding__form-grid__item--full"
             >
               <div class="qualification-requirement">
-                <n-radio-group
+                <n-checkbox-group
                   v-model:value="
                     formData.basicInfo.qualificationRequirementType
                   "
-                  name="qualificationRequirementType"
                 >
-                  <n-radio value="option1">
-                    独立法人资格，持有有效的营业执照、基本账户开户许可证或基本存款账户信息表。
-                  </n-radio>
-                  <n-radio value="option2">
-                    其他
-                    <n-input
-                      v-if="
-                        formData.basicInfo.qualificationRequirementType ===
-                        'option2'
-                      "
-                      v-model:value="
-                        formData.basicInfo.qualificationRequirementOther
-                      "
-                      placeholder="请输入资质要求"
-                      style="width: 400px; margin-left: 8px"
-                      maxlength="500"
-                    />
-                  </n-radio>
-                  <n-radio value="option3">无</n-radio>
-                </n-radio-group>
+                  <n-space vertical>
+                    <n-checkbox value="option1">
+                      独立法人资格，持有有效的营业执照、基本账户开户许可证或基本存款账户信息表。
+                    </n-checkbox>
+                    <n-checkbox value="option2">
+                      <span class="inline-checkbox-label">
+                        其他
+                        <n-input
+                          v-if="
+                            formData.basicInfo.qualificationRequirementType.includes(
+                              'option2',
+                            )
+                          "
+                          v-model:value="
+                            formData.basicInfo.qualificationRequirementOther
+                          "
+                          placeholder="请输入资质要求"
+                          style="width: 400px; margin-left: 8px"
+                          maxlength="500"
+                          @click.stop
+                        />
+                      </span>
+                    </n-checkbox>
+                    <n-checkbox value="option3">无</n-checkbox>
+                  </n-space>
+                </n-checkbox-group>
               </div>
             </n-form-item>
 
@@ -1929,6 +1934,39 @@ watch(
 );
 
 /**
+ * 监听资质要求变化，实现"无"与其他选项的互斥逻辑
+ * - 选择"无"时，取消勾选 option1 和 option2
+ * - 选择 option1 或 option2 时，取消勾选"无"
+ */
+watch(
+  () => formData.value.basicInfo.qualificationRequirementType,
+  (newValue, oldValue) => {
+    if (!newValue) return;
+
+    const hasOption3 = newValue.includes("option3");
+    const hasOption1OrOption2 =
+      newValue.includes("option1") || newValue.includes("option2");
+
+    // 如果同时选择了"无"和其他选项
+    if (hasOption3 && hasOption1OrOption2) {
+      // 判断是刚选择了"无"还是刚选择了其他选项
+      const hadOption3 = oldValue?.includes("option3");
+
+      if (hadOption3) {
+        // 之前已有"无"，现在选择了其他，移除"无"
+        formData.value.basicInfo.qualificationRequirementType = newValue.filter(
+          (item) => item !== "option3",
+        );
+      } else {
+        // 之前没有"无"，现在选择了"无"，只保留"无"
+        formData.value.basicInfo.qualificationRequirementType = ["option3"];
+      }
+    }
+  },
+  { deep: true },
+);
+
+/**
  * 克隆历史项目
  */
 const handleCloneProject = (project: IHistoryProject) => {
@@ -2099,7 +2137,7 @@ onBeforeUnmount(() => {
   width: 100%;
 }
 
-.qualification-requirement :deep(.n-radio),
+.qualification-requirement :deep(.n-checkbox),
 .financial-requirement :deep(.n-radio) {
   display: flex;
   align-items: flex-start;

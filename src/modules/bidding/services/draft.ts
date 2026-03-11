@@ -109,7 +109,7 @@ export const createEmptyFormData = (): IBiddingFormData => ({
     deliveryDateText: "",
     deliveryLocation: "",
     bidScope: "",
-    qualificationRequirementType: "option1",
+    qualificationRequirementType: ["option1"],
     qualificationRequirementOther: "",
     financialRequirementType: "has",
     financialRequirementContent: "",
