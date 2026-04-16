@@ -50,25 +50,9 @@ const BID_SUBJECT_LABELS: Record<string, string> = {
  * 枚举值中文映射表 - 资质要求类型
  */
 const QUALIFICATION_REQUIREMENT_LABELS = {
-  option1:
-    "独立法人资格，持有有效的营业执照、基本账户开户许可证或基本存款账户信息表。",
-  option3: "无",
-} as const;
-
-/**
- * 枚举值中文映射表 - 联合体投标
- */
-const ACCEPT_JOINT_BID_LABELS = {
-  yes: "是",
-  no: "否",
-} as const;
-
-/**
- * 枚举值中文映射表 - 代理商投标
- */
-const ACCEPT_AGENT_BID_LABELS = {
-  accept: "接受",
-  reject: "不接受",
+  option1: "制造商",
+  option2: "代理商",
+  option3: "销售商",
 } as const;
 
 /**
@@ -109,14 +93,6 @@ const DETAILED_EVALUATION = {
 } as const;
 
 /**
- * 枚举值中文映射表 - 资格审查方式
- */
-const QUALIFICATION_METHOD_LABELS = {
-  "post-review": "资格后审",
-  "pre-review": "资格预审",
-} as const;
-
-/**
  * 枚举值中文映射表 - 财务状况要求
  */
 const FINANCIAL_STATUS_REQUIREMENT_LABELS = {
@@ -152,8 +128,11 @@ const IS_SMALL_MEDIUM_ENTERPRISE_LABELS = {
  * 投标保证金形式映射
  */
 const BID_BOND_FORM_LABELS: Record<string, string> = {
-  "bank-transfer": "银行现汇",
-  "commitment-letter": "保证金承诺函",
+  "wire-transfer": "电汇",
+  "bank-guarantee": "银行保函",
+  "commitment-letter":
+    "投标人在招标人单位尚有未付货款且金额大于本次投标保证金的，允许投标人递交保证金承诺函，替代投标保证金",
+  other: "招标人及招标代理机构可以接受的其他形式",
 };
 
 /**
@@ -260,44 +239,27 @@ export const transformFormDataToTemplateData = (
   const labels: string[] = [];
 
   for (const type of types) {
-    if (type === "option2") {
-      if (basicInfo.qualificationRequirementOther) {
-        labels.push(basicInfo.qualificationRequirementOther);
-      }
-    } else if (type in QUALIFICATION_REQUIREMENT_LABELS) {
-      labels.push(QUALIFICATION_REQUIREMENT_LABELS[type as keyof typeof QUALIFICATION_REQUIREMENT_LABELS]);
+    if (type in QUALIFICATION_REQUIREMENT_LABELS) {
+      labels.push(
+        QUALIFICATION_REQUIREMENT_LABELS[
+          type as keyof typeof QUALIFICATION_REQUIREMENT_LABELS
+        ],
+      );
     }
   }
 
   qualificationRequirement = labels.length > 0 ? labels.join("、") : "无";
 
-  // ========== 构建财务要求文本 ==========
-  let financialRequirement = "";
-  if (basicInfo.financialRequirementType === "has") {
-    financialRequirement = basicInfo.financialRequirementContent || "有";
-  } else {
-    financialRequirement = "无";
-  }
-
   // ========== 构建业绩要求文本 ==========
   let performanceRequirement = "";
   if (basicInfo.performanceRequirementType === "has") {
-    performanceRequirement = `投标人提供近${basicInfo.performanceYears}年（指从投标截止日往前推算${basicInfo.performanceYears}年，例如投标截止日为2024年6月1日，则近5年是指2019年6月1日至2024年5月31日，以合同签订时间为准）类似${basicInfo.performanceType || ""}业绩至少${basicInfo.performanceCount}个。\n注：工业与信息化部等部委颁布的相关名录所列的首台（套）装备、首批次材料、首版次软件参与采购活动时，供应商提交相关证明材料，即视同满足市场占有率、使用业绩等要求。`;
+    const startDateText = basicInfo.performanceStartDate
+      ? formatDateToChinese(basicInfo.performanceStartDate)
+      : "投标截止时间";
+
+    performanceRequirement = `本次招标要求投标人在近${basicInfo.performanceYears}年（${startDateText}至投标截止时间）内具有${basicInfo.performanceType || ""}供货业绩`;
   } else {
     performanceRequirement = "无";
-  }
-
-  // ========== 构建联合体投标要求文本 ==========
-  let jointBidRequirements = "";
-  if (basicInfo.acceptJointBid === "yes") {
-    const parts: string[] = [];
-    parts.push(
-      `联合体所有成员数量不得超过${basicInfo.jointBidMaxMembers || 2}家`,
-    );
-    if (basicInfo.jointBidQualificationRequirement) {
-      parts.push(basicInfo.jointBidQualificationRequirement);
-    }
-    jointBidRequirements = parts.join("；");
   }
 
   // ========== 构建交货期文本 ==========
@@ -312,12 +274,24 @@ export const transformFormDataToTemplateData = (
   let bidBondRequirement = "";
   if (bidderInstructions.requireBidBond === true) {
     const amountText = formatAmount(bidderInstructions.bidBondAmount);
-    const forms =
-      bidderInstructions.bidBondForms
-        .map((f) => BID_BOND_FORM_LABELS[f])
-        .filter(Boolean)
-        .join("、") || "银行现汇";
-    bidBondRequirement = `要求，金额为${amountText}，形式：${forms}`;
+    const formItems = bidderInstructions.bidBondForms
+      .map((f) => BID_BOND_FORM_LABELS[f])
+      .filter(Boolean);
+
+    const formsList = formItems
+      .map((item, index) => `(${index + 1}) ${item}`)
+      .join("\n");
+
+    bidBondRequirement = `要求，投标保证金的形式及金额如下：
+1、投标保证金的形式：
+${formsList}
+2、投标保证金的金额：${amountText}元人民币。
+3、接收投标保证金的账户信息：
+名称：中冶长天国际工程有限责任公司        开户行及帐号：交通银行湖南省分行营业部431612000018000173895
+4、投标保证金的递交：
+以电汇或现金转账形式提交的投标保证金应从投标人基本帐户转出，在开标截止日前汇至以上帐户（请注明XX项目投标保证金），并在投标文件中提交汇款凭证及基本存款账户银行出具的“开户许可证”或基本账户相关证明资料；
+采用银行保函形式提交的，应提供由在中华人民共和国境内银行总行、分行或其支行出具（银行保函的格式要求详见本招标文件“第六章投标文件格式”中的要求）,保函有效期应当与投标有效期一致；在投标文件中应包含银行保函原件的扫描件，同时投标人应在投标文件递交截止时间前将银行保函原件邮寄或现场提交至招标人。
+以其他形式递交投标保证金的，需在取得招标人认可后，按招标人的具体要求提供，否则其投标将被否决。`;
   } else if (bidderInstructions.requireBidBond === false) {
     bidBondRequirement = "不要求";
   }
@@ -416,45 +390,6 @@ export const transformFormDataToTemplateData = (
     maxBidPrice = "无";
   }
 
-  // ========== 构建标书费文本 ==========
-  let bidDocumentFee = "";
-  if (bidderInstructions.requireBidDocumentFee === true) {
-    const amount = bidderInstructions.bidDocumentFeeAmount;
-    bidDocumentFee = `要求，人民币${amount?.toFixed(2) || 0}元`;
-    const forms =
-      bidderInstructions.bidDocumentFeeForms
-        .map((f) => (f === "bank-transfer" ? "银行现汇" : "现金缴纳"))
-        .join("、") || "银行现汇";
-    bidDocumentFee += `，形式：${forms}`;
-  } else {
-    bidDocumentFee = "不要求";
-  }
-
-  // ========== 构建招标费用缴纳情况文本 ==========
-  const bidFeePaymentStatusParts: string[] = [];
-  if (bidderInstructions.requireBidBond === true) {
-    bidFeePaymentStatusParts.push("保证金缴纳");
-  }
-  if (bidderInstructions.requireBidDocumentFee === true) {
-    bidFeePaymentStatusParts.push("按要求进行网上投标和标书费");
-  }
-  const bidFeePaymentStatus =
-    bidFeePaymentStatusParts.length > 0
-      ? bidFeePaymentStatusParts.join("，")
-      : "无";
-
-  // ========== 构建投标报名信息文本 ==========
-  let bidRegistrationInfo = "";
-  if (basicInfo.bidRegistrationType === "datetime-range") {
-    const startTime = formatDateTimeToChinese(
-      basicInfo.bidRegistrationStartTime,
-    );
-    const endTime = formatDateTimeToChinese(basicInfo.bidRegistrationEndTime);
-    bidRegistrationInfo = `${startTime}至${endTime}(北京时间，下同)`;
-  } else {
-    bidRegistrationInfo = "报名开始和报名截止时间（详见五矿采购平台）";
-  }
-
   // ========== 转换评分表数据 ==========
   const transformScoringItems = (
     items: Array<{
@@ -505,26 +440,57 @@ export const transformFormDataToTemplateData = (
     bidNumber: basicInfo.bidNumber,
     coverDate: formatDateToChinese(basicInfo.coverDate),
     equipmentName: basicInfo.equipmentName,
+    projectOverview: basicInfo.projectOverview,
     deliveryDate,
     deliveryLocation: basicInfo.deliveryLocation,
-    bidScope: basicInfo.bidScope,
     qualificationRequirement,
-    financialRequirement,
     performanceRequirement,
-    acceptJointBid: ACCEPT_JOINT_BID_LABELS[basicInfo.acceptJointBid],
-    jointBidRequirements,
-    acceptAgentBid: ACCEPT_AGENT_BID_LABELS[basicInfo.acceptAgentBid],
+    acceptAgentBid:
+      basicInfo.acceptAgentBid === "accept"
+        ? `接受，应满足下列要求：
+一个制造商对同一品牌同一型号的材设备，仅能委托一个代理商参加投标（仅针对设备招标）；
+投标人为代理经销商的，对投标人的资质要求包含对制造商的资质要求，对投标人的业绩要求包含对投标设备材料的业绩要求。`
+        : basicInfo.acceptAgentBid === "reject"
+          ? "不接受"
+          : "",
+    acceptJointBid:
+      basicInfo.acceptJointBid === "accept"
+        ? `接受，应满足下列要求：
+（1）联合体各方必须按招标文件提供的格式签订联合体协议书，明确联合体牵头人和各方的权利义务；
+（2）联合体各方不得再以自己名义单独或加入其他联合体在同一工程中参加资格审查。`
+        : basicInfo.acceptJointBid === "reject"
+          ? "不接受"
+          : "",
+    acceptJointBidSimple:
+      basicInfo.acceptJointBid === "accept"
+        ? "接受"
+        : basicInfo.acceptJointBid === "reject"
+          ? "不接受"
+          : "",
     qualityIssueNote: basicInfo.qualityIssueNote,
+    bidDocumentFee:
+      basicInfo.bidDocumentFee != null
+        ? basicInfo.bidDocumentFee.toFixed(2)
+        : "",
     contactPerson: basicInfo.contactPerson,
     contactPhone: basicInfo.contactPhone,
     contactEmail: basicInfo.contactEmail,
-    bidRegistrationInfo,
 
     // ============ 投标人须知 ============
-    bidSectionCount:
-      (bidderInstructions.bidSectionCount ?? 1).toString() + "个",
     evaluationMethod:
       EVALUATION_METHOD_LABELS[bidderInstructions.evaluationMethodType],
+    capitalSourceAndRatio: bidderInstructions.capitalSourceAndRatio,
+    qualityStandard: bidderInstructions.qualityStandard,
+    preMeetingRequirement:
+      bidderInstructions.preMeetingRequired === "no"
+        ? "不召开"
+        : bidderInstructions.preMeetingRequired === "yes"
+          ? `召开，召开时间：${formatDateTimeToChinese(bidderInstructions.preMeetingTime)}，召开地点：${bidderInstructions.preMeetingLocation || ""}`
+          : "",
+    preMeetingQuestionDeadline:
+      bidderInstructions.preMeetingRequired === "no"
+        ? ""
+        : `时间：${formatDateTimeToChinese(bidderInstructions.questionDeadlineTime)}前提出\n形式：书面形式\n邮箱：${bidderInstructions.questionEmail || ""}`,
     evaluationMethodDescription:
       EVALUATION_METHOD_DESCRIPTIONS[bidderInstructions.evaluationMethodType],
     evaluationSummaryRanking:
@@ -532,8 +498,6 @@ export const transformFormDataToTemplateData = (
     detailedEvaluation:
       DETAILED_EVALUATION[bidderInstructions.evaluationMethodType],
     bidBondRequirement,
-    qualificationMethod:
-      QUALIFICATION_METHOD_LABELS[bidderInstructions.qualificationMethod],
     specialQualificationRequirement:
       bidderInstructions.hasSpecialQualificationReq === true
         ? bidderInstructions.specialQualificationRequirement || "有"
@@ -550,8 +514,6 @@ export const transformFormDataToTemplateData = (
     performanceBondRequirement,
     noNegativeDeviationItems,
     maxBidPrice,
-    bidDocumentFee,
-    bidFeePaymentStatus,
     abortBidWhenOverBudget:
       bidderInstructions.abortBidWhenOverBudget === "yes" ? "是" : "否",
     isSmallMediumEnterprise:

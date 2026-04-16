@@ -6,7 +6,7 @@
   <div class="public-bidding">
     <!-- 页面头部 -->
     <div class="public-bidding__header">
-      <h1 class="public-bidding__title">标准设备招标采购申请表</h1>
+      <h1 class="public-bidding__title">标准材料/设备招标采购申请表</h1>
       <!-- <p class="public-bidding__subtitle">请填写完整信息，系统将自动保存草稿</p>
       <p v-if="lastSavedTime" class="public-bidding__saved-hint">
         上次保存时间：{{ lastSavedTime }}
@@ -100,13 +100,13 @@
           <h3 class="public-bidding__section-title">招标基本信息</h3>
           <div class="public-bidding__form-grid">
             <n-form-item
-              label="采购设备名称"
+              label="采购材料/设备名称"
               path="basicInfo.equipmentName"
               class="public-bidding__form-grid__item--full"
             >
               <n-input
                 v-model:value="formData.basicInfo.equipmentName"
-                placeholder="请输入采购设备名称"
+                placeholder="请输入采购材料/设备名称"
                 maxlength="200"
                 show-count
               />
@@ -116,6 +116,22 @@
           <!-- 项目概况与招标范围 -->
           <h4 class="public-bidding__subsection-title">项目概况与招标范围</h4>
           <div class="public-bidding__form-grid">
+            <!-- 项目概况 -->
+            <n-form-item
+              label="项目概况"
+              path="basicInfo.projectOverview"
+              class="public-bidding__form-grid__item--full"
+            >
+              <n-input
+                v-model:value="formData.basicInfo.projectOverview"
+                type="textarea"
+                placeholder="建设项目概况，说明工程建设项目的建设地点、规模、建设工期、标段划分等"
+                :autosize="{ minRows: 3, maxRows: 6 }"
+                maxlength="2000"
+                show-count
+              />
+            </n-form-item>
+
             <!-- 交货期 - 日期/文本切换 -->
             <n-form-item label="交货期类型" path="basicInfo.deliveryDateType">
               <n-radio-group
@@ -162,21 +178,6 @@
                 maxlength="200"
               />
             </n-form-item>
-
-            <n-form-item
-              label="招标范围"
-              path="basicInfo.bidScope"
-              class="public-bidding__form-grid__item--full"
-            >
-              <n-input
-                v-model:value="formData.basicInfo.bidScope"
-                type="textarea"
-                placeholder="请详细描述招标范围"
-                :autosize="{ minRows: 3, maxRows: 6 }"
-                maxlength="2000"
-                show-count
-              />
-            </n-form-item>
           </div>
 
           <!-- 投标人资格要求 -->
@@ -184,7 +185,7 @@
           <div class="public-bidding__form-grid">
             <!-- 资质要求 -->
             <n-form-item
-              label="资质要求"
+              label="投标人须具备独立法人资格，具有有效的营业执照，并具有与本招标项目相应的供货能力的（可一项或多项）"
               path="basicInfo.qualificationRequirementType"
               class="public-bidding__form-grid__item--full"
             >
@@ -195,61 +196,11 @@
                   "
                 >
                   <n-space vertical>
-                    <n-checkbox value="option1">
-                      独立法人资格，持有有效的营业执照、基本账户开户许可证或基本存款账户信息表。
-                    </n-checkbox>
-                    <n-checkbox value="option2">
-                      <span class="inline-checkbox-label">
-                        其他
-                        <n-input
-                          v-if="
-                            formData.basicInfo.qualificationRequirementType.includes(
-                              'option2',
-                            )
-                          "
-                          v-model:value="
-                            formData.basicInfo.qualificationRequirementOther
-                          "
-                          placeholder="请输入资质要求"
-                          style="width: 400px; margin-left: 8px"
-                          maxlength="500"
-                          @click.stop
-                        />
-                      </span>
-                    </n-checkbox>
-                    <n-checkbox value="option3">无</n-checkbox>
+                    <n-checkbox value="option1">制造商</n-checkbox>
+                    <n-checkbox value="option2">代理商</n-checkbox>
+                    <n-checkbox value="option3">销售商</n-checkbox>
                   </n-space>
                 </n-checkbox-group>
-              </div>
-            </n-form-item>
-
-            <!-- 财务要求 -->
-            <n-form-item
-              label="财务要求"
-              path="basicInfo.financialRequirementType"
-              class="public-bidding__form-grid__item--full"
-            >
-              <div class="financial-requirement">
-                <n-radio-group
-                  v-model:value="formData.basicInfo.financialRequirementType"
-                  name="financialRequirementType"
-                >
-                  <n-radio value="has">
-                    有
-                    <n-input
-                      v-if="
-                        formData.basicInfo.financialRequirementType === 'has'
-                      "
-                      v-model:value="
-                        formData.basicInfo.financialRequirementContent
-                      "
-                      placeholder="请输入财务要求"
-                      style="width: 400px; margin-left: 8px"
-                      maxlength="500"
-                    />
-                  </n-radio>
-                  <n-radio value="none">无</n-radio>
-                </n-radio-group>
               </div>
             </n-form-item>
 
@@ -274,7 +225,7 @@
                   class="performance-requirement__inputs"
                 >
                   <span class="performance-requirement__text"
-                    >投标人提供近</span
+                    >本次招标要求投标人在近</span
                   >
                   <n-input-number
                     v-model:value="formData.basicInfo.performanceYears"
@@ -282,94 +233,31 @@
                     :max="20"
                     style="width: 80px; margin: 0 4px"
                   />
+                  <span class="performance-requirement__text"
+                    >年，起始日期为</span
+                  >
+                  <n-date-picker
+                    v-model:value="formData.basicInfo.performanceStartDate"
+                    type="date"
+                    placeholder="请选择起始日期"
+                    format="yyyy年MM月dd日"
+                    style="width: 160px; margin: 0 4px"
+                  />
                   <span class="performance-requirement__text">
                     年（指从投标截止日往前推算{{
                       formData.basicInfo.performanceYears
-                    }}年，例如投标截止日为2024年6月1日，则近5年是指2019年6月1日至2024年5月31日，以合同签订时间为准）类似
+                    }}年，例如投标截止日为2024年6月1日，则近5年是指2019年6月1日至2024年5月31日，以合同签订时间为准）内具有
                   </span>
                   <n-input
                     v-model:value="formData.basicInfo.performanceType"
-                    placeholder="请输入业绩类型"
-                    style="width: 150px; margin: 0 4px"
+                    placeholder="请输入业绩信息"
+                    style="width: 550px; margin: 0 4px"
                     maxlength="50"
                   />
-                  <span class="performance-requirement__text">业绩至少</span>
-                  <n-input-number
-                    v-model:value="formData.basicInfo.performanceCount"
-                    :min="1"
-                    :max="100"
-                    style="width: 80px; margin: 0 4px"
-                  />
-                  <span class="performance-requirement__text">个。</span>
-                  <p class="performance-requirement__note">
-                    注：工业与信息化部等部委颁布的相关名录所列的首台（套）装备、首批次材料、首版次软件参与采购活动时，供应商提交相关证明材料，即视同满足市场占有率、使用业绩等要求。
-                  </p>
+                  <span class="performance-requirement__text">供货业绩。</span>
                 </div>
               </div>
             </n-form-item>
-
-            <!-- 本次招标接受联合体投标 -->
-            <n-form-item
-              label="本次招标接受联合体投标"
-              path="basicInfo.acceptJointBid"
-              class="public-bidding__form-grid__item--full"
-            >
-              <n-radio-group
-                v-model:value="formData.basicInfo.acceptJointBid"
-                name="acceptJointBid"
-              >
-                <n-radio value="yes">是</n-radio>
-                <n-radio value="no">否</n-radio>
-              </n-radio-group>
-            </n-form-item>
-
-            <!-- 联合体投标具体要求（选择"是"时显示） -->
-            <div
-              v-if="formData.basicInfo.acceptJointBid === 'yes'"
-              class="joint-bid-requirements"
-            >
-              <div class="joint-bid-requirements__title">应满足下列要求：</div>
-
-              <!-- （1）联合体所有成员数量 -->
-              <n-form-item
-                label="联合体所有成员数量不得超过（家）"
-                path="basicInfo.jointBidMaxMembers"
-                class="public-bidding__form-grid__item--full"
-                :rule="{
-                  required: true,
-                  type: 'number',
-                  message: '请输入联合体所有成员数量上限',
-                  trigger: ['blur', 'change'],
-                }"
-              >
-                <n-input-number
-                  v-model:value="formData.basicInfo.jointBidMaxMembers"
-                  :min="2"
-                  :max="50"
-                  :precision="0"
-                  placeholder="请输入成员数量上限"
-                  style="width: 200px"
-                />
-              </n-form-item>
-
-              <!-- （2）联合体应具有的资格条件要求 -->
-              <n-form-item
-                label="联合体应具有的资格条件要求"
-                path="basicInfo.jointBidQualificationRequirement"
-                class="public-bidding__form-grid__item--full"
-              >
-                <n-input
-                  v-model:value="
-                    formData.basicInfo.jointBidQualificationRequirement
-                  "
-                  type="textarea"
-                  placeholder="请描述联合体应具有的资格条件要求（可选）"
-                  :autosize="{ minRows: 3, maxRows: 6 }"
-                  maxlength="1000"
-                  show-count
-                />
-              </n-form-item>
-            </div>
 
             <!-- 本次招标是否接受代理商投标 -->
             <n-form-item
@@ -380,6 +268,21 @@
               <n-radio-group
                 v-model:value="formData.basicInfo.acceptAgentBid"
                 name="acceptAgentBid"
+              >
+                <n-radio value="accept">接受</n-radio>
+                <n-radio value="reject">不接受</n-radio>
+              </n-radio-group>
+            </n-form-item>
+
+            <!-- 本次招标是否接受联合体投标 -->
+            <n-form-item
+              label="本次招标是否接受联合体投标"
+              path="basicInfo.acceptJointBid"
+              class="public-bidding__form-grid__item--full"
+            >
+              <n-radio-group
+                v-model:value="formData.basicInfo.acceptJointBid"
+                name="acceptJointBid"
               >
                 <n-radio value="accept">接受</n-radio>
                 <n-radio value="reject">不接受</n-radio>
@@ -402,64 +305,24 @@
                 >质量、违约等问题（以招标人或上级单位供应商问题记录库为准）。</span
               >
             </n-form-item>
-          </div>
 
-          <!-- 投标报名及招标文件的获取 -->
-          <h4 class="public-bidding__subsection-title">
-            投标报名及招标文件的获取
-          </h4>
-          <div class="public-bidding__form-grid">
+            <!-- 本项目招标文件每套售价 -->
             <n-form-item
-              label="投标报名"
-              path="basicInfo.bidRegistrationType"
+              label="本项目招标文件每套售价"
+              path="basicInfo.bidDocumentFee"
               class="public-bidding__form-grid__item--full"
             >
-              <n-radio-group
-                v-model:value="formData.basicInfo.bidRegistrationType"
-                name="bidRegistrationType"
+              <n-input-number
+                v-model:value="formData.basicInfo.bidDocumentFee"
+                :min="0"
+                :precision="2"
+                placeholder="请输入金额"
+                style="width: 200px"
               >
-                <n-radio value="datetime-range">
-                  <span class="inline-radio-label">指定时间</span>
-                </n-radio>
-                <n-radio value="platform">
-                  <span class="inline-radio-label"
-                    >报名开始和报名截止时间（详见五矿采购平台）</span
-                  >
-                </n-radio>
-              </n-radio-group>
+                <template #suffix>元</template>
+              </n-input-number>
+              <span style="margin-left: 8px">（须在投标报名期间支付）</span>
             </n-form-item>
-
-            <!-- 指定时间范围的输入区域 -->
-            <div
-              v-if="formData.basicInfo.bidRegistrationType === 'datetime-range'"
-              class="bid-registration-datetime__inputs"
-            >
-              <n-form-item
-                label="报名开始时间"
-                path="basicInfo.bidRegistrationStartTime"
-              >
-                <n-date-picker
-                  v-model:value="formData.basicInfo.bidRegistrationStartTime"
-                  type="datetime"
-                  placeholder="请选择开始时间"
-                  format="yyyy年MM月dd日HH时"
-                  style="width: 100%"
-                />
-              </n-form-item>
-
-              <n-form-item
-                label="报名截止时间"
-                path="basicInfo.bidRegistrationEndTime"
-              >
-                <n-date-picker
-                  v-model:value="formData.basicInfo.bidRegistrationEndTime"
-                  type="datetime"
-                  placeholder="请选择截止时间"
-                  format="yyyy年MM月dd日HH时"
-                  style="width: 100%"
-                />
-              </n-form-item>
-            </div>
           </div>
 
           <!-- 联系方式 -->
@@ -499,24 +362,6 @@
           <h3 class="public-bidding__section-title">投标人须知前附表</h3>
 
           <div class="public-bidding__form-grid">
-            <!-- 划分采购标段情况 -->
-            <n-form-item
-              label="标段数量"
-              path="bidderInstructions.bidSectionCount"
-            >
-              <n-input-number
-                v-model:value="formData.bidderInstructions.bidSectionCount"
-                :min="1"
-                :precision="0"
-                placeholder="请输入标段数量"
-                style="width: 100%"
-              >
-                <template #suffix>
-                  <span>个</span>
-                </template>
-              </n-input-number>
-            </n-form-item>
-
             <!-- 评标办法 -->
             <n-form-item
               label="评标办法"
@@ -529,6 +374,113 @@
                 <n-radio value="comprehensive">综合评分法</n-radio>
                 <n-radio value="lowest-price">经评审的最低价中标法</n-radio>
               </n-radio-group>
+            </n-form-item>
+            <!-- 资金来源及比例 -->
+            <n-form-item
+              label="资金来源及比例"
+              path="bidderInstructions.capitalSourceAndRatio"
+              class="public-bidding__form-grid__item--full"
+            >
+              <n-input
+                v-model:value="
+                  formData.bidderInstructions.capitalSourceAndRatio
+                "
+                placeholder="请输入资金来源及比例"
+              />
+            </n-form-item>
+            <!-- 质量标准 -->
+            <n-form-item
+              label="质量标准"
+              path="bidderInstructions.qualityStandard"
+              class="public-bidding__form-grid__item--full"
+            >
+              <n-input
+                v-model:value="formData.bidderInstructions.qualityStandard"
+                type="textarea"
+                placeholder="根据实际情况填写"
+                :autosize="{ minRows: 2, maxRows: 4 }"
+              />
+            </n-form-item>
+            <!-- 投标预备会 -->
+            <n-form-item
+              label="投标预备会"
+              path="bidderInstructions.preMeetingRequired"
+              class="public-bidding__form-grid__item--full"
+            >
+              <n-radio-group
+                v-model:value="formData.bidderInstructions.preMeetingRequired"
+                name="preMeetingRequired"
+              >
+                <n-radio value="no">不召开</n-radio>
+                <n-radio value="yes">召开</n-radio>
+              </n-radio-group>
+            </n-form-item>
+            <!-- 召开时间及地点（仅当召开时显示） -->
+            <n-form-item
+              v-if="formData.bidderInstructions.preMeetingRequired === 'yes'"
+              label="召开时间"
+              path="bidderInstructions.preMeetingTime"
+              class="public-bidding__form-grid__item--full"
+            >
+              <n-date-picker
+                v-model:value="formData.bidderInstructions.preMeetingTime"
+                type="datetime"
+                format="yyyy年MM月dd日HH时mm分ss秒"
+                placeholder="请选择召开时间"
+                style="width: 100%"
+              />
+            </n-form-item>
+            <n-form-item
+              v-if="formData.bidderInstructions.preMeetingRequired === 'yes'"
+              label="召开地点"
+              path="bidderInstructions.preMeetingLocation"
+            >
+              <n-input
+                v-model:value="formData.bidderInstructions.preMeetingLocation"
+                placeholder="请输入召开地点"
+              />
+            </n-form-item>
+            <!-- 投标人在投标预备会前提出问题（仅当召开时显示） -->
+            <n-form-item
+              v-if="formData.bidderInstructions.preMeetingRequired === 'yes'"
+              label="投标人在投标预备会前提出问题"
+              path="bidderInstructions.questionDeadlineTime"
+              class="public-bidding__form-grid__item--full"
+            >
+              <div
+                class="public-bidding__form-grid"
+                style="display: flex; gap: 16px; width: 100%"
+              >
+                <n-form-item
+                  label="时间"
+                  path="bidderInstructions.questionDeadlineTime"
+                  style="flex: 1"
+                >
+                  <div style="display: flex; align-items: center; gap: 8px">
+                    <n-date-picker
+                      v-model:value="
+                        formData.bidderInstructions.questionDeadlineTime
+                      "
+                      type="datetime"
+                      format="yyyy年MM月dd日HH时"
+                      placeholder="请选择时间"
+                      style="width: 180px"
+                    />
+                    <span>前提出</span>
+                  </div>
+                </n-form-item>
+                <n-form-item
+                  label="邮箱"
+                  path="bidderInstructions.questionEmail"
+                  style="flex: 1"
+                >
+                  <n-input
+                    v-model:value="formData.bidderInstructions.questionEmail"
+                    placeholder="请输入邮箱"
+                    style="width: 100%"
+                  />
+                </n-form-item>
+              </div>
             </n-form-item>
             <!-- 是否要求投标保证金 -->
             <n-form-item
@@ -570,24 +522,15 @@
               <n-checkbox-group
                 v-model:value="formData.bidderInstructions.bidBondForms"
               >
-                <n-checkbox value="bank-transfer">银行现汇</n-checkbox>
-                <n-checkbox value="commitment-letter">保证金承诺函</n-checkbox>
+                <n-checkbox value="wire-transfer">电汇</n-checkbox>
+                <n-checkbox value="bank-guarantee">银行保函</n-checkbox>
+                <n-checkbox value="commitment-letter"
+                  >投标人在招标人单位尚有未付货款且金额大于本次投标保证金的，允许投标人递交保证金承诺函，替代投标保证金</n-checkbox
+                >
+                <n-checkbox value="other"
+                  >招标人及招标代理机构可以接受的其他形式</n-checkbox
+                >
               </n-checkbox-group>
-            </n-form-item>
-
-            <!-- 资格审查方式 -->
-            <n-form-item
-              label="资格审查方式"
-              path="bidderInstructions.qualificationMethod"
-              class="public-bidding__form-grid__item--full"
-            >
-              <n-radio-group
-                v-model:value="formData.bidderInstructions.qualificationMethod"
-                name="qualificationMethod"
-              >
-                <n-radio value="post-review">资格后审</n-radio>
-                <n-radio value="pre-review">资格预审</n-radio>
-              </n-radio-group>
             </n-form-item>
 
             <!-- 是否有资格审查资料特殊要求 -->
@@ -1014,57 +957,6 @@
                 placeholder="请输入最高投标限价"
                 style="width: 100%"
               />
-            </n-form-item>
-
-            <!-- 标书费 -->
-            <n-form-item
-              label="标书费"
-              path="bidderInstructions.requireBidDocumentFee"
-            >
-              <n-radio-group
-                v-model:value="
-                  formData.bidderInstructions.requireBidDocumentFee
-                "
-                name="requireBidDocumentFee"
-              >
-                <n-radio :value="false">不要求</n-radio>
-                <n-radio :value="true">要求</n-radio>
-              </n-radio-group>
-            </n-form-item>
-
-            <!-- 标书费金额（要求时显示） -->
-            <n-form-item
-              v-if="formData.bidderInstructions.requireBidDocumentFee === true"
-              label="标书费的金额"
-              path="bidderInstructions.bidDocumentFeeAmount"
-              class="public-bidding__form-grid__item--full"
-            >
-              <span class="form-item__prefix-text">人民币</span>
-              <n-input-number
-                v-model:value="formData.bidderInstructions.bidDocumentFeeAmount"
-                :min="0"
-                :precision="2"
-                placeholder="请输入金额"
-                style="width: 200px; margin: 0 8px"
-              />
-              <span class="form-item__suffix-text">元整</span>
-            </n-form-item>
-
-            <!-- 标书费的形式（要求时显示） -->
-            <n-form-item
-              v-if="formData.bidderInstructions.requireBidDocumentFee === true"
-              label="标书费的形式"
-              path="bidderInstructions.bidDocumentFeeForms"
-              class="public-bidding__form-grid__item--full"
-            >
-              <n-checkbox-group
-                v-model:value="formData.bidderInstructions.bidDocumentFeeForms"
-              >
-                <n-space>
-                  <n-checkbox value="bank-transfer">银行现汇</n-checkbox>
-                  <n-checkbox value="cash">现金缴纳</n-checkbox>
-                </n-space>
-              </n-checkbox-group>
             </n-form-item>
 
             <!-- 中标价高于预算金额时是否废标 -->
@@ -1517,7 +1409,10 @@ import type {
   ISelectOption,
   IHistoryProject,
 } from "@/modules/bidding/types";
-import { HistoryFloatButton, HistoryProjectDrawer } from "@/modules/bidding/components";
+import {
+  HistoryFloatButton,
+  HistoryProjectDrawer,
+} from "@/modules/bidding/components";
 
 /**
  * 消息提示
@@ -1710,7 +1605,7 @@ const handleExportWord = async () => {
       },
       {
         templatePath:
-          "/void-frontend/v3template/标准设备招标文件_公开招标.docx",
+          "/void-frontend/v3template/物资设备类招标文件示范文本-公开招标.docx",
         outputFileName: `公开设备招标文件_${basicInfo.bidNumber}`,
       },
     );
@@ -1934,39 +1829,6 @@ watch(
 );
 
 /**
- * 监听资质要求变化，实现"无"与其他选项的互斥逻辑
- * - 选择"无"时，取消勾选 option1 和 option2
- * - 选择 option1 或 option2 时，取消勾选"无"
- */
-watch(
-  () => formData.value.basicInfo.qualificationRequirementType,
-  (newValue, oldValue) => {
-    if (!newValue) return;
-
-    const hasOption3 = newValue.includes("option3");
-    const hasOption1OrOption2 =
-      newValue.includes("option1") || newValue.includes("option2");
-
-    // 如果同时选择了"无"和其他选项
-    if (hasOption3 && hasOption1OrOption2) {
-      // 判断是刚选择了"无"还是刚选择了其他选项
-      const hadOption3 = oldValue?.includes("option3");
-
-      if (hadOption3) {
-        // 之前已有"无"，现在选择了其他，移除"无"
-        formData.value.basicInfo.qualificationRequirementType = newValue.filter(
-          (item) => item !== "option3",
-        );
-      } else {
-        // 之前没有"无"，现在选择了"无"，只保留"无"
-        formData.value.basicInfo.qualificationRequirementType = ["option3"];
-      }
-    }
-  },
-  { deep: true },
-);
-
-/**
  * 监听问题严重程度变化
  * 当勾选"严重"时，自动勾选"重大"（因为严重包含重大）
  */
@@ -1984,6 +1846,37 @@ watch(
     }
   },
   { deep: true },
+);
+
+/**
+ * 监听业绩年限变化
+ * 当填写了近多少年后，自动根据招标文件封面日期推算起始日期
+ */
+watch(
+  [
+    () => formData.value.basicInfo.performanceYears,
+    () => formData.value.basicInfo.coverDate,
+  ],
+  ([years, coverDate]) => {
+    // 只有选择了"有"业绩要求时才计算
+    if (formData.value.basicInfo.performanceRequirementType !== "has") {
+      return;
+    }
+
+    // 获取基准日期（封面日期或当前日期）
+    const baseDate = coverDate ? new Date(coverDate) : new Date();
+
+    // 往前推N年
+    const startDate = new Date(baseDate);
+    startDate.setFullYear(startDate.getFullYear() - (years || 0));
+
+    // 设置为该年的1月1日
+    startDate.setMonth(0);
+    startDate.setDate(1);
+
+    // 转换为时间戳赋值给起始日期
+    formData.value.basicInfo.performanceStartDate = startDate.getTime();
+  },
 );
 
 /**
@@ -2479,24 +2372,6 @@ onBeforeUnmount(() => {
 .scoring-summary__value--total {
   font-size: 20px;
   color: #18a058;
-}
-
-/* 联合体投标要求区域样式 */
-.joint-bid-requirements {
-  width: 100%;
-  padding: 16px;
-  margin-top: 8px;
-  background-color: #f9fafb;
-  border-radius: 4px;
-}
-
-.joint-bid-requirements__title {
-  margin-bottom: 16px;
-  padding-left: 12px;
-  font-size: 14px;
-  font-weight: 550;
-  color: #555;
-  border-left: 3px solid #409eff;
 }
 
 /* 投标报名时间输入区域样式 */

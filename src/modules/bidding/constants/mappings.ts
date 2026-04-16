@@ -17,17 +17,9 @@ export const BID_SUBJECT_LABELS: Record<string, string> = {
  * 资质要求类型映射
  */
 export const QUALIFICATION_REQUIREMENT_LABELS = {
-  option1:
-    "独立法人资格，持有有效的营业执照、基本账户开户许可证或基本存款账户信息表。",
-  option3: "无",
-} as const;
-
-/**
- * 联合体投标映射
- */
-export const ACCEPT_JOINT_BID_LABELS = {
-  yes: "是",
-  no: "否",
+  option1: "制造商",
+  option2: "代理商",
+  option3: "销售商",
 } as const;
 
 /**
@@ -73,14 +65,6 @@ export const DETAILED_EVALUATION = {
   comprehensive:
     "综合评分法：分为投标报价评审、商务评审、技术评审（得分四舍五入保留两位小数）。",
   "lowest-price": "最低评标价法：无。",
-} as const;
-
-/**
- * 资格审查方式映射
- */
-export const QUALIFICATION_METHOD_LABELS = {
-  "post-review": "资格后审",
-  "pre-review": "资格预审",
 } as const;
 
 /**

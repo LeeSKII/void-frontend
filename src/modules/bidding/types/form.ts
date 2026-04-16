@@ -19,24 +19,19 @@ export type ProcurementType = "goods" | "services" | "construction";
 export type QualificationRequirementOption = "option1" | "option2" | "option3";
 
 /**
- * 财务要求类型
- */
-export type FinancialRequirementType = "has" | "none";
-
-/**
  * 业绩要求类型
  */
 export type PerformanceRequirementType = "has" | "none";
 
 /**
- * 联合体投标类型
- */
-export type JointBidType = "yes" | "no";
-
-/**
  * 代理商投标类型
  */
 export type AgentBidType = "accept" | "reject";
+
+/**
+ * 联合体投标类型
+ */
+export type JointBidType = "accept" | "reject";
 
 /**
  * 问题严重程度类型
@@ -53,6 +48,8 @@ export interface IBasicInfo {
   coverDate: number | null;
   /** 采购设备名称 */
   equipmentName: string;
+  /** 项目概况 */
+  projectOverview: string;
   /** 交货期类型 */
   deliveryDateType: "date" | "text";
   /** 交货期（日期模式，时间戳） */
@@ -61,34 +58,26 @@ export interface IBasicInfo {
   deliveryDateText: string;
   /** 交货地点 */
   deliveryLocation: string;
-  /** 招标范围 */
-  bidScope: string;
   /** 资质要求类型（多选） */
   qualificationRequirementType: QualificationRequirementOption[];
   /** 资质要求其他内容 */
   qualificationRequirementOther: string;
-  /** 财务要求类型 */
-  financialRequirementType: FinancialRequirementType;
-  /** 财务要求内容 */
-  financialRequirementContent: string;
   /** 业绩要求类型 */
   performanceRequirementType: PerformanceRequirementType;
   /** 业绩年限 */
   performanceYears: number;
+  /** 业绩开始日期 */
+  performanceStartDate: number | null;
   /** 业绩类型 */
   performanceType: string;
-  /** 业绩数量 */
-  performanceCount: number;
-  /** 本次招标接受联合体投标 */
-  acceptJointBid: JointBidType;
-  /** 联合体所有成员数量上限（家） */
-  jointBidMaxMembers: number | null;
-  /** 联合体应具有的资格条件要求 */
-  jointBidQualificationRequirement: string;
   /** 本次招标是否接受代理商投标 */
   acceptAgentBid: AgentBidType;
+  /** 本次招标是否接受联合体投标 */
+  acceptJointBid: JointBidType | undefined;
   /** 未在招标人或上级单位发生过选择项 */
   issueSelectionType: IssueSeverityType[];
+  /** 本项目招标文件每套售价（元） */
+  bidDocumentFee: number | null;
   /** 质量问题说明 */
   qualityIssueNote: string;
   /** 联系人 */
@@ -97,12 +86,6 @@ export interface IBasicInfo {
   contactPhone: string;
   /** 联系邮箱 */
   contactEmail: string;
-  /** 投标报名类型 */
-  bidRegistrationType: "datetime-range" | "platform";
-  /** 投标报名开始时间（时间戳） */
-  bidRegistrationStartTime: number | null;
-  /** 投标报名结束时间（时间戳） */
-  bidRegistrationEndTime: number | null;
 }
 
 /**
@@ -221,18 +204,28 @@ export interface IComprehensiveScoring {
  * 投标人须知接口
  */
 export interface IBidderInstructions {
-  /** 划分采购标段数量 */
-  bidSectionCount: number | null;
   /** 评标办法类型 */
   evaluationMethodType: "comprehensive" | "lowest-price";
+  /** 资金来源及比例 */
+  capitalSourceAndRatio: string;
+  /** 质量标准 */
+  qualityStandard: string;
+  /** 投标预备会是否召开 */
+  preMeetingRequired: "no" | "yes" | undefined;
+  /** 投标预备会召开时间 */
+  preMeetingTime: number | null;
+  /** 投标预备会召开地点 */
+  preMeetingLocation: string;
+  /** 提问截止时间 */
+  questionDeadlineTime: number | null;
+  /** 提问邮箱 */
+  questionEmail: string;
   /** 是否要求投标保证金 */
   requireBidBond: boolean | null;
   /** 保证金金额（元） */
   bidBondAmount: number | null;
   /** 保证金形式 */
-  bidBondForms: ("bank-transfer" | "commitment-letter")[];
-  /** 资格审查方式 */
-  qualificationMethod: "post-review" | "pre-review";
+  bidBondForms: string[];
   /** 是否有资格审查资料特殊要求 */
   hasSpecialQualificationReq: boolean | null;
   /** 资格审查资料具体要求 */
@@ -275,12 +268,6 @@ export interface IBidderInstructions {
   hasMaxBidPrice: boolean | null;
   /** 最高投标限价金额（元） */
   maxBidPrice: number | null;
-  /** 是否要求标书费 */
-  requireBidDocumentFee: boolean | null;
-  /** 标书费金额（元） */
-  bidDocumentFeeAmount: number | null;
-  /** 标书费的形式（多选） */
-  bidDocumentFeeForms: ("bank-transfer" | "cash")[];
   /** 中标价高于预算金额时是否废标 */
   abortBidWhenOverBudget: "yes" | "no" | null;
   /** 投标人是否属于中小企业 */
