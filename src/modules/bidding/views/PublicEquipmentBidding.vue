@@ -1107,9 +1107,7 @@
               class="public-bidding__form-grid__item--full"
             >
               <n-radio-group
-                v-model:value="
-                  formData.bidderInstructions.returnBidDocuments
-                "
+                v-model:value="formData.bidderInstructions.returnBidDocuments"
                 name="returnBidDocuments"
               >
                 <n-radio value="yes">是</n-radio>
@@ -1176,9 +1174,7 @@
               class="public-bidding__form-grid__item--full"
             >
               <n-radio-group
-                v-model:value="
-                  formData.bidderInstructions.useElectronicBidding
-                "
+                v-model:value="formData.bidderInstructions.useElectronicBidding"
                 name="useElectronicBidding"
               >
                 <n-radio value="yes">是</n-radio>
@@ -1207,8 +1203,12 @@
                 >
                   <n-space vertical>
                     <n-checkbox value="cash">现汇</n-checkbox>
-                    <n-checkbox value="bank-guarantee">银行保函（须为不可撤销、见索即付）</n-checkbox>
-                    <n-checkbox value="other">招标人及招标代理机构可以接受的其他形式</n-checkbox>
+                    <n-checkbox value="bank-guarantee"
+                      >银行保函（须为不可撤销、见索即付）</n-checkbox
+                    >
+                    <n-checkbox value="other"
+                      >招标人及招标代理机构可以接受的其他形式</n-checkbox
+                    >
                   </n-space>
                 </n-checkbox-group>
               </n-form-item>
@@ -1366,7 +1366,25 @@
           </div>
 
           <!-- 商务评分表 -->
-          <h3 class="public-bidding__section-title">商务评分表</h3>
+          <div
+            style="
+              display: flex;
+              align-items: center;
+              gap: 12px;
+              margin-bottom: 12px;
+            "
+          >
+            <h3 class="public-bidding__section-title" style="margin: 0">
+              商务评分表
+            </h3>
+            <n-button
+              size="small"
+              type="info"
+              @click="openCommercialImportModal"
+            >
+              导入评分项
+            </n-button>
+          </div>
           <div class="public-bidding__scoring-table-wrapper">
             <table class="public-bidding__scoring-table">
               <thead>
@@ -1453,7 +1471,25 @@
           </div>
 
           <!-- 技术评分表 -->
-          <h3 class="public-bidding__section-title">技术评分表</h3>
+          <div
+            style="
+              display: flex;
+              align-items: center;
+              gap: 12px;
+              margin-bottom: 12px;
+            "
+          >
+            <h3 class="public-bidding__section-title" style="margin: 0">
+              技术评分表
+            </h3>
+            <n-button
+              size="small"
+              type="info"
+              @click="openTechnicalImportModal"
+            >
+              导入评分项
+            </n-button>
+          </div>
           <div class="public-bidding__scoring-table-wrapper">
             <table class="public-bidding__scoring-table">
               <thead>
@@ -1540,7 +1576,21 @@
           </div>
 
           <!-- 价格评分表 -->
-          <h3 class="public-bidding__section-title">价格评分表</h3>
+          <div
+            style="
+              display: flex;
+              align-items: center;
+              gap: 12px;
+              margin-bottom: 12px;
+            "
+          >
+            <h3 class="public-bidding__section-title" style="margin: 0">
+              价格评分表
+            </h3>
+            <n-button size="small" type="info" @click="openPriceImportModal">
+              导入评分项
+            </n-button>
+          </div>
           <div class="public-bidding__scoring-table-wrapper">
             <table
               class="public-bidding__scoring-table public-bidding__scoring-table--price"
@@ -1653,6 +1703,107 @@
       v-model="historyDrawerVisible"
       @select-project="handleCloneProject"
     />
+
+    <!-- 商务评分表导入模态框 -->
+    <n-modal
+      v-model:show="commercialImportModalVisible"
+      preset="card"
+      title="选择商务评分项（参考）"
+      style="width: 600px; max-width: 90vw"
+      :segmented="{ content: true, footer: true }"
+    >
+      <n-checkbox-group v-model:value="commercialImportSelected">
+        <n-space vertical>
+          <n-checkbox
+            v-for="item in commercialScoringTemplateList"
+            :key="item.id"
+            :value="item.id"
+            :label="`${item.itemName}（分值：${item.score}）`"
+            style="margin-bottom: 8px"
+          />
+        </n-space>
+      </n-checkbox-group>
+      <template #footer>
+        <n-space justify="end">
+          <n-button @click="commercialImportModalVisible = false"
+            >取消</n-button
+          >
+          <n-button
+            type="primary"
+            :disabled="commercialImportSelected.length === 0"
+            @click="confirmImportCommercial"
+          >
+            导入（{{ commercialImportSelected.length }}项）
+          </n-button>
+        </n-space>
+      </template>
+    </n-modal>
+
+    <!-- 技术评分表导入模态框 -->
+    <n-modal
+      v-model:show="technicalImportModalVisible"
+      preset="card"
+      title="选择技术评分项（参考）"
+      style="width: 600px; max-width: 90vw"
+      :segmented="{ content: true, footer: true }"
+    >
+      <n-checkbox-group v-model:value="technicalImportSelected">
+        <n-space vertical>
+          <n-checkbox
+            v-for="item in technicalScoringTemplateList"
+            :key="item.id"
+            :value="item.id"
+            :label="`${item.itemName}（分值：${item.score}）`"
+            style="margin-bottom: 8px"
+          />
+        </n-space>
+      </n-checkbox-group>
+      <template #footer>
+        <n-space justify="end">
+          <n-button @click="technicalImportModalVisible = false">取消</n-button>
+          <n-button
+            type="primary"
+            :disabled="technicalImportSelected.length === 0"
+            @click="confirmImportTechnical"
+          >
+            导入（{{ technicalImportSelected.length }}项）
+          </n-button>
+        </n-space>
+      </template>
+    </n-modal>
+
+    <!-- 价格评分表导入模态框 -->
+    <n-modal
+      v-model:show="priceImportModalVisible"
+      preset="card"
+      title="选择价格评分项（参考）"
+      style="width: 600px; max-width: 90vw"
+      :segmented="{ content: true, footer: true }"
+    >
+      <n-checkbox-group v-model:value="priceImportSelected">
+        <n-space vertical>
+          <n-checkbox
+            v-for="item in priceScoringTemplateList"
+            :key="item.id"
+            :value="item.id"
+            :label="`${item.itemName}（分值：${item.score}）`"
+            style="margin-bottom: 8px"
+          />
+        </n-space>
+      </n-checkbox-group>
+      <template #footer>
+        <n-space justify="end">
+          <n-button @click="priceImportModalVisible = false">取消</n-button>
+          <n-button
+            type="primary"
+            :disabled="priceImportSelected.length === 0"
+            @click="confirmImportPrice"
+          >
+            导入（{{ priceImportSelected.length }}项）
+          </n-button>
+        </n-space>
+      </template>
+    </n-modal>
   </div>
 </template>
 
@@ -1727,6 +1878,158 @@ const lastSavedTime = ref("");
  * 历史项目抽屉相关
  */
 const historyDrawerVisible = ref(false);
+
+/**
+ * 商务评分表导入模态框相关
+ */
+const commercialImportModalVisible = ref(false);
+const commercialImportSelected = ref<string[]>([]);
+
+/**
+ * 商务评分表预定义列表
+ */
+const commercialScoringTemplateList = [
+  {
+    id: "1",
+    itemName: "企业管理体系认证情况",
+    score: 10,
+    scoringStandard:
+      "通过ISO质量管理体系认证的得  分；通过环境管理体系认证的得  分；通过职业健康安全管理认证的得   分。",
+  },
+  {
+    id: "2",
+    itemName: "信誉",
+    score: 10,
+    scoringStandard:
+      "具有AAA级资信等级证书的得   分；具有AA级资信等级证书的得   分；具有A级资信等级证书及以下的得   分。",
+  },
+  {
+    id: "3",
+    itemName: "对招标文件商务条款的响应程度",
+    score: 10,
+    scoringStandard:
+      "根据投标人所提供的投标文件对招标文件商务条款的响应程度进行评审打分项，完全响应得 分，部分响应得   分，不响应得   分。",
+  },
+  {
+    id: "4",
+    itemName: "供应商评级",
+    score: 10,
+    scoringStandard: "提供完整的质量保证措施",
+  },
+  {
+    id: "5",
+    itemName: "供货商问题记录",
+    score: 10,
+    scoringStandard:
+      "近五年内在中冶长天供货商问题库中有严重问题记录的供应商，每条扣   分，一般问题每条扣   分， 有重大问题记录的，评委有权力否决其投标。",
+  },
+  {
+    id: "6",
+    itemName: "投标设备的业绩",
+    score: 10,
+    scoringStandard:
+      "有效业绩证明指在本招标文件所要求年度内，金额不低于    万元的类似设备的供货合同（提供的业绩必须为投标人自身的项目业绩的合同扫描件（价格可隐去），否则不计分，同一项目的补充合同不计为新的业绩（原件备查验）。）每提供一个有效业绩证明，得      分，最高得   分。未提供有效业绩证明材料的不得分。",
+  },
+];
+
+/**
+ * 技术评分表导入模态框相关
+ */
+const technicalImportModalVisible = ref(false);
+const technicalImportSelected = ref<string[]>([]);
+
+/**
+ * 技术评分表预定义列表
+ */
+const technicalScoringTemplateList = [
+  {
+    id: "1",
+    itemName: "标书响应性",
+    score: 10,
+    scoringStandard:
+      "根据标书响应性评分，每有一处不符合项扣      分，扣完为止。",
+  },
+  {
+    id: "2",
+    itemName: "对投标设备整体评价",
+    score: 10,
+    scoringStandard:
+      "所投标的设备完全符合招标文件的规定，技术指标无偏差或提出的技术偏差能够满足采购项目的使用要求，得   分；所投标的设备基本符合招标文件的规定，技术指标有偏差或提出的技术偏差基本能满足采购项目的使用要求，得   分；所投标的设备不符合招标文件规定，技术偏差不能满足采购项目的使用要求，不得分 。",
+  },
+  {
+    id: "3",
+    itemName: "投标设备技术性能指标响应程度",
+    score: 10,
+    scoringStandard:
+      "所投标设备的质量标准完全响应招标文件的要求，得   分；所投标设备的质量标准基本响应招标文件的要求，得   分；所投标设备的质量标准不响应招标文件的要求，不得分 。",
+  },
+  {
+    id: "4",
+    itemName: "对投标人技术服务和质保期服务能力的评价",
+    score: 10,
+    scoringStandard:
+      "投标人相关服务能力好、服务方案完善的，得   分；投标人相关服务能力较好、服务方案较完善的， 得   分；投标人相关服务能力一般、服务方案不完善的，得    分。",
+  },
+  {
+    id: "5",
+    itemName: "对投标人生产能力的评价",
+    score: 10,
+    scoringStandard:
+      "投标人生产能力在所有投标人中最强的，得   分；投标人生产能力较强的， 得     分；投标人生产能力较弱的，得     分。",
+  },
+  {
+    id: "6",
+    itemName: "生产设备及检测设备的先进性",
+    score: 10,
+    scoringStandard:
+      "投标人生产设备及检测设备在所有投标人中最先进的，得   分；投标人生产设备及检测设备较先进的，得     分；投标人生产设备及检测设备较差的，得     分。",
+  },
+  {
+    id: "7",
+    itemName: "包装、运输方案",
+    score: 10,
+    scoringStandard:
+      "包装、运输方案合理的，得   分；包装、运输方案较合理的，得   分；包装、运输方案一般或不合理的，得   分。",
+  },
+  {
+    id: "8",
+    itemName: "供货计划及供货保障措施",
+    score: 10,
+    scoringStandard:
+      "计划及保障措施合理的，得   分；计划及保障措施较合理的，得   分；计划及保障措施一般或不合理的，得   分。",
+  },
+  {
+    id: "9",
+    itemName: "服务承诺",
+    score: 10,
+    scoringStandard:
+      "承诺内容完善的，得   分；承诺内容较完善的，得   分；无承诺或承诺内容一般或不完善的，得   分。",
+  },
+];
+
+/**
+ * 价格评分表导入模态框相关
+ */
+const priceImportModalVisible = ref(false);
+const priceImportSelected = ref<string[]>([]);
+
+/**
+ * 价格评分表预定义列表
+ */
+const priceScoringTemplateList = [
+  {
+    id: "1",
+    itemName: "投标报价评审得分",
+    score: 50,
+    scoringStandard: "投标报价得分=(评标基准价/投标报价)×投标报价总分值",
+  },
+  {
+    id: "2",
+    itemName: "税率不一致的情况",
+    score: 10,
+    scoringStandard: "各投标人的投标税率不一致时，以不含税价格进行评审。",
+  },
+];
 
 /**
  * 表单数据
@@ -1901,6 +2204,117 @@ const handleExportWord = async () => {
  * 自动保存定时器
  */
 let autoSaveTimer: number | null = null;
+
+/**
+ * 综合评分法 - 打开商务评分表导入模态框
+ */
+const openCommercialImportModal = () => {
+  commercialImportSelected.value = [];
+  commercialImportModalVisible.value = true;
+};
+
+/**
+ * 综合评分法 - 确认导入商务评分表
+ */
+const confirmImportCommercial = () => {
+  if (!formData.value.comprehensiveScoring) {
+    formData.value.comprehensiveScoring = {
+      commercialScoring: { items: [] },
+      technicalScoring: { items: [] },
+      priceScoring: { items: [] },
+    };
+  }
+
+  const selectedItems = commercialScoringTemplateList.filter((item) =>
+    commercialImportSelected.value.includes(item.id),
+  );
+
+  selectedItems.forEach((item) => {
+    formData.value.comprehensiveScoring!.commercialScoring.items.push({
+      index: Date.now() + Math.random(),
+      itemName: item.itemName,
+      score: item.score,
+      scoringStandard: item.scoringStandard,
+    });
+  });
+
+  commercialImportModalVisible.value = false;
+  message.success(`成功导入 ${selectedItems.length} 项`);
+};
+
+/**
+ * 综合评分法 - 打开技术评分表导入模态框
+ */
+const openTechnicalImportModal = () => {
+  technicalImportSelected.value = [];
+  technicalImportModalVisible.value = true;
+};
+
+/**
+ * 综合评分法 - 确认导入技术评分表
+ */
+const confirmImportTechnical = () => {
+  if (!formData.value.comprehensiveScoring) {
+    formData.value.comprehensiveScoring = {
+      commercialScoring: { items: [] },
+      technicalScoring: { items: [] },
+      priceScoring: { items: [] },
+    };
+  }
+
+  const selectedItems = technicalScoringTemplateList.filter((item) =>
+    technicalImportSelected.value.includes(item.id),
+  );
+
+  selectedItems.forEach((item) => {
+    formData.value.comprehensiveScoring!.technicalScoring.items.push({
+      index: Date.now() + Math.random(),
+      itemName: item.itemName,
+      score: item.score,
+      scoringStandard: item.scoringStandard,
+    });
+  });
+
+  technicalImportModalVisible.value = false;
+  message.success(`成功导入 ${selectedItems.length} 项`);
+};
+
+/**
+ * 综合评分法 - 打开价格评分表导入模态框
+ */
+const openPriceImportModal = () => {
+  priceImportSelected.value = [];
+  priceImportModalVisible.value = true;
+};
+
+/**
+ * 综合评分法 - 确认导入价格评分表
+ */
+const confirmImportPrice = () => {
+  if (!formData.value.comprehensiveScoring) {
+    formData.value.comprehensiveScoring = {
+      commercialScoring: { items: [] },
+      technicalScoring: { items: [] },
+      priceScoring: { items: [] },
+    };
+  }
+
+  const selectedItems = priceScoringTemplateList.filter((item) =>
+    priceImportSelected.value.includes(item.id),
+  );
+
+  selectedItems.forEach((item) => {
+    formData.value.comprehensiveScoring!.priceScoring.items.push({
+      index: Date.now() + Math.random(),
+      itemName: item.itemName,
+      score: item.score,
+      scoringStandard: item.scoringStandard,
+    });
+  });
+
+  priceImportModalVisible.value = false;
+  message.success(`成功导入 ${selectedItems.length} 项`);
+};
 
 /**
  * 综合评分法 - 增加商务评分表行
