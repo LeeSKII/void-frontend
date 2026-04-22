@@ -382,7 +382,7 @@ ${formsList}
   // ========== 构建最高投标限价文本 ==========
   let maxBidPrice = "";
   if (bidderInstructions.hasMaxBidPrice === true) {
-    maxBidPrice = `有，最高投标限价：${formatAmount(bidderInstructions.maxBidPrice)}元`;
+    maxBidPrice = `有，最高投标限价：${formatAmount(bidderInstructions.maxBidPrice)}`;
   } else {
     maxBidPrice = "无";
   }
@@ -465,6 +465,12 @@ ${formsList}
           ? "不接受"
           : "",
     qualityIssueNote: basicInfo.qualityIssueNote,
+    issueSelectionType:
+      basicInfo.issueSelectionType && basicInfo.issueSelectionType.length > 0
+        ? basicInfo.issueSelectionType
+            .map((t) => (t === "major" ? "重大" : t === "serious" ? "严重" : t))
+            .join("、")
+        : "无",
     bidDocumentFee:
       basicInfo.bidDocumentFee != null
         ? basicInfo.bidDocumentFee.toFixed(2)

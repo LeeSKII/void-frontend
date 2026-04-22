@@ -67,6 +67,8 @@ export interface IWordTemplateData {
   acceptJointBidSimple: string;
   /** 质量问题说明 */
   qualityIssueNote: string;
+  /** 未在招标人或上级单位发生过质量问题（重大/严重） */
+  issueSelectionType: string;
   /** 本项目招标文件每套售价（元） */
   bidDocumentFee: string;
   /** 支付形式 */
