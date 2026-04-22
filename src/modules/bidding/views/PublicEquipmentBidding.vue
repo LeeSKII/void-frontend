@@ -6,7 +6,9 @@
   <div class="public-bidding">
     <!-- 页面头部 -->
     <div class="public-bidding__header">
-      <h1 class="public-bidding__title">标准材料/设备招标采购申请表</h1>
+      <h1 class="public-bidding__title">
+        公开招标-标准材料/设备招标采购申请表
+      </h1>
       <!-- <p class="public-bidding__subtitle">请填写完整信息，系统将自动保存草稿</p>
       <p v-if="lastSavedTime" class="public-bidding__saved-hint">
         上次保存时间：{{ lastSavedTime }}
@@ -2167,7 +2169,7 @@ const handleSubmit = async () => {
  */
 const handleExportWord = async () => {
   // 验证必填字段
-  const { basicInfo } = formData.value;
+  const { basicInfo, bidderInstructions } = formData.value;
   if (!basicInfo.projectName || !basicInfo.bidNumber) {
     message.warning("请完善项目名称和招标编号后再导出");
     return;
@@ -2175,14 +2177,19 @@ const handleExportWord = async () => {
 
   exporting.value = true;
   try {
+    // 根据评标办法选择模板
+    const templateFileName =
+      bidderInstructions.evaluationMethodType === "comprehensive"
+        ? "物资设备类招标文件示范文本-公开招标-综合评分法.docx"
+        : "物资设备类招标文件示范文本-公开招标-最低价中标.docx";
+
     const result = await exportWordDocumentWithProgress(
       formData.value,
       () => {
         // 进度回调（暂不展示具体进度）
       },
       {
-        templatePath:
-          "/void-frontend/v3template/物资设备类招标文件示范文本-公开招标.docx",
+        templatePath: `/void-frontend/v3template/${templateFileName}`,
         outputFileName: `公开设备招标文件_${basicInfo.bidNumber}`,
       },
     );

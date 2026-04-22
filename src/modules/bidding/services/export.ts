@@ -498,7 +498,7 @@ ${formsList}
           : "",
     preMeetingQuestionDeadline:
       bidderInstructions.preMeetingRequired === "no"
-        ? ""
+        ? "无"
         : `时间：${formatDateTimeToChinese(bidderInstructions.questionDeadlineTime)}前提出\n形式：书面形式\n邮箱：${bidderInstructions.questionEmail || ""}`,
     evaluationMethodDescription:
       EVALUATION_METHOD_DESCRIPTIONS[bidderInstructions.evaluationMethodType],
