@@ -78,6 +78,8 @@ export interface IBasicInfo {
   issueSelectionType: IssueSeverityType[];
   /** 本项目招标文件每套售价（元） */
   bidDocumentFee: number | null;
+  /** 支付形式 */
+  bidDocumentFeePaymentType: "bank" | "cash" | null;
   /** 质量问题说明 */
   qualityIssueNote: string;
   /** 联系人 */
@@ -87,14 +89,6 @@ export interface IBasicInfo {
   /** 联系邮箱 */
   contactEmail: string;
 }
-
-/**
- * 财务状况要求类型
- */
-export type FinancialStatusRequirement =
-  | "not-applicable"
-  | "applicable-one-year"
-  | "applicable-recent-years";
 
 /**
  * 近年完成的类似项目情况要求类型
@@ -130,9 +124,8 @@ export type PerformanceBondRequirementType = "not-required" | "required";
  * 履约保证金形式类型
  */
 export type PerformanceBondFormType =
-  | "bank-guarantee"
   | "cash"
-  | "check"
+  | "bank-guarantee"
   | "other";
 
 /**
@@ -152,7 +145,11 @@ export type NoNegativeDeviationType =
   | "bid-validity"
   | "quality-warranty"
   | "equipment-specs"
-  | "technical-asterisk";
+  | "technical-asterisk"
+  | "other";
+
+  /** 不允许负偏离项其他内容 */
+  noNegativeDeviationOtherText: string;
 
 /**
  * 评分表项接口
@@ -230,8 +227,6 @@ export interface IBidderInstructions {
   hasSpecialQualificationReq: boolean | null;
   /** 资格审查资料具体要求 */
   specialQualificationRequirement: string;
-  /** 财务状况要求类型 */
-  financialStatusRequirement: FinancialStatusRequirement;
   /** 财务报表年度数（当选择"适用-近年"时需要） */
   financialReportYears: number | null;
   /** 近年完成的类似项目情况要求类型 */
@@ -250,28 +245,58 @@ export interface IBidderInstructions {
   proofMaterialRequirement: ProofMaterialRequirementType[];
   /** 其他要求 */
   recentProjectOtherRequirements: string;
+  /** 近年发生的诉讼及仲裁情况的年数 */
+  litigationYears: number | null;
+  /** 近年发生的诉讼及仲裁情况的起始日期 */
+  litigationStartDate: number | null;
   /** 是否允许递交备选投标方案 */
   allowAlternativeBidProposal: AlternativeBidProposalType;
-  /** 评标委员会推荐中标候选人的人数 */
-  recommendedCandidateCount: number | null;
+  /** 是否需要递交纸质投标文件 */
+  requirePaperBidDocument: boolean | null;
+  /** 投标文件副本份数 */
+  paperBidDocumentCopies: number | null;
+  /** 是否要求提交电子版文件 */
+  requireElectronicFile: boolean | null;
+  /** 是否需要分册装订 */
+  requireSeparateBinding: boolean | null;
+  /** 是否授权评标委员会确定中标人 */
+  authorizeCommitteeToConfirmWinner: "yes" | "no" | null;
   /** 是否要求中标人提交履约保证金 */
   requirePerformanceBond: PerformanceBondRequirementType;
+  /** 是否采用电子招标投标 */
+  useElectronicBidding: "yes" | "no" | null;
   /** 履约保证金形式（多选） */
   performanceBondForms: PerformanceBondFormType[];
-  /** 履约保证金的金额（元） */
+  /** 履约保证金金额（合同总额的百分比） */
   performanceBondAmount: number | null;
   /** 出具保函的银行要求（多选） */
   bankGuaranteeRequirements: BankGuaranteeRequirementType[];
+  /** 负偏差类型 */
+  negativeDeviationType: "not-allowed" | "allowed" | undefined;
+  /** 偏差范围 */
+  deviationRange: string;
+  /** 最高负偏离项数 */
+  maxNegativeDeviationCount: number | null;
   /** 投标文件需实质性响应招标文件，不允许负偏离项（多选） */
   noNegativeDeviationItems: NoNegativeDeviationType[];
+  /** 不允许负偏离项其他内容 */
+  noNegativeDeviationOtherText: string;
+  /** 投标人要求澄清招标文件 - 发送至 */
+  clarificationSendTo: string;
+  /** 增值税税金的计算方法 */
+  vatCalculationMethod: string;
   /** 是否有最高投标限价 */
   hasMaxBidPrice: boolean | null;
   /** 最高投标限价金额（元） */
   maxBidPrice: number | null;
+  /** 投标有效期（天） */
+  bidValidity: number | null;
   /** 中标价高于预算金额时是否废标 */
   abortBidWhenOverBudget: "yes" | "no" | null;
-  /** 投标人是否属于中小企业 */
-  isSmallMediumEnterprise: "yes" | "no";
+  /** 投标文件是否退还 */
+  returnBidDocuments: "yes" | "no" | null;
+  /** 投标文件退还时间 */
+  returnBidDocumentsDate: number | null;
   /** 符合性评审表-资格评审 */
   conformityReviewItems: IConformityReviewItem[];
 }

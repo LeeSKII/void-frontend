@@ -93,15 +93,6 @@ const DETAILED_EVALUATION = {
 } as const;
 
 /**
- * 枚举值中文映射表 - 财务状况要求
- */
-const FINANCIAL_STATUS_REQUIREMENT_LABELS = {
-  "not-applicable": "不适用",
-  "applicable-one-year":
-    "投标人应提供经会计事务所或审计机构审计的上一年度财务报表",
-} as const;
-
-/**
  * 枚举值中文映射表 - 近年项目要求
  */
 const RECENT_PROJECT_REQUIREMENT_LABELS = {
@@ -114,14 +105,6 @@ const RECENT_PROJECT_REQUIREMENT_LABELS = {
 const ALLOW_ALTERNATIVE_BID_LABELS = {
   "not-allowed": "不允许",
   allowed: "允许",
-} as const;
-
-/**
- * 枚举值中文映射表 - 中小企业
- */
-const IS_SMALL_MEDIUM_ENTERPRISE_LABELS = {
-  yes: "是",
-  no: "否",
 } as const;
 
 /**
@@ -139,18 +122,9 @@ const BID_BOND_FORM_LABELS: Record<string, string> = {
  * 履约保证金形式映射
  */
 const PERFORMANCE_BOND_FORM_LABELS: Record<string, string> = {
-  "bank-guarantee": "银行保函",
-  cash: "现金",
-  check: "支票",
-  other: "其他",
-};
-
-/**
- * 银行保函要求映射
- */
-const BANK_GUARANTEE_REQUIREMENT_LABELS: Record<string, string> = {
-  "no-restriction": "无限制",
-  "branch-or-above": "应由支行及以上国有或股份制商业银行",
+  cash: "现汇",
+  "bank-guarantee": "银行保函（须为不可撤销、见索即付）",
+  other: "招标人及招标代理机构可以接受的其他形式",
 };
 
 /**
@@ -176,6 +150,7 @@ const NO_NEGATIVE_DEVIATION_LABELS: Record<string, string> = {
   "quality-warranty": "质保期",
   "equipment-specs": "设备规格型号及主要参数",
   "technical-asterisk": "技术文件中带*号项",
+  other: "其他",
 };
 
 /**
@@ -297,21 +272,8 @@ ${formsList}
   }
 
   // ========== 构建财务状况要求文本 ==========
-  let financialStatusRequirement = "";
-  if (
-    bidderInstructions.financialStatusRequirement === "applicable-recent-years"
-  ) {
-    financialStatusRequirement = `适用：投标人应递交近${bidderInstructions.financialReportYears || 1}年度经会计事务所或审计机构审计的财务报表。（注：从每年的1月1日至4月30日，如投标人无法提供上一年度财务报表资料，则可以再上一年度财务报表；从每年5月1日开始至12月31日，投标人应当提供上一年度财务报表。供应商的成立时间少于该规定年份的，应提供成立以来的财务报表）`;
-  } else if (
-    bidderInstructions.financialStatusRequirement === "applicable-one-year"
-  ) {
-    financialStatusRequirement = `适用：投标人应提供经会计事务所或审计机构审计的上一年度财务报表。（注：供应商的成立时间少于该规定年份的，应提供成立以来的财务报表）`;
-  } else {
-    financialStatusRequirement =
-      FINANCIAL_STATUS_REQUIREMENT_LABELS[
-        bidderInstructions.financialStatusRequirement
-      ] || "";
-  }
+  const financialStatusRequirement =
+    bidderInstructions.financialReportYears?.toString() || "";
 
   // ========== 构建近年项目要求文本 ==========
   let recentProjectRequirement = "";
@@ -352,40 +314,75 @@ ${formsList}
       ] || "";
   }
 
+  // ========== 构建近年发生的诉讼及仲裁情况的时间要求文本 ==========
+  let litigationRequirement = "";
+  if (
+    bidderInstructions.litigationYears &&
+    bidderInstructions.litigationStartDate
+  ) {
+    litigationRequirement = `近${bidderInstructions.litigationYears}年（${formatDateToChinese(bidderInstructions.litigationStartDate)}起至投标截至日止）`;
+  } else if (bidderInstructions.litigationYears) {
+    litigationRequirement = `近${bidderInstructions.litigationYears}年`;
+  }
+
+  // ========== 构建纸质投标文件要求文本 ==========
+  let paperBidDocumentRequirement = "";
+  if (bidderInstructions.requirePaperBidDocument === false) {
+    paperBidDocumentRequirement = "不要求递交纸质投标文件";
+  } else if (bidderInstructions.requirePaperBidDocument === true) {
+    const copies = bidderInstructions.paperBidDocumentCopies ?? "";
+    const electronicFile =
+      bidderInstructions.requireElectronicFile === true ? "是" : "否";
+    const separateBinding =
+      bidderInstructions.requireSeparateBinding === true ? "是" : "否";
+    paperBidDocumentRequirement = `需要递交纸质投标文件：\n投标文件副本份数：${copies}\n是否要求提交电子版文件：${electronicFile}\n是否需要分册装订：${separateBinding}`;
+  }
+
+  // ========== 构建投标文件是否退还文本 ==========
+  let returnBidDocuments = "";
+  if (bidderInstructions.returnBidDocuments === "no") {
+    returnBidDocuments = "否";
+  } else if (bidderInstructions.returnBidDocuments === "yes") {
+    const dateStr = bidderInstructions.returnBidDocumentsDate
+      ? formatDateToChinese(bidderInstructions.returnBidDocumentsDate)
+      : "";
+    returnBidDocuments = dateStr ? `是，退还时间：${dateStr}` : "是";
+  }
+
   // ========== 构建履约保证金要求文本 ==========
   let performanceBondRequirement = "";
   if (bidderInstructions.requirePerformanceBond === "required") {
-    const forms =
-      bidderInstructions.performanceBondForms
-        .map((f) => PERFORMANCE_BOND_FORM_LABELS[f])
-        .filter(Boolean)
-        .join("、") || "银行保函";
-    const amountText = formatAmount(bidderInstructions.performanceBondAmount);
-    performanceBondRequirement = `要求，形式：${forms}，金额：${amountText}`;
-
-    // 银行保函要求
-    if (bidderInstructions.performanceBondForms.includes("bank-guarantee")) {
-      const bankReqs = bidderInstructions.bankGuaranteeRequirements
-        .map((r) => BANK_GUARANTEE_REQUIREMENT_LABELS[r])
-        .filter(Boolean)
-        .join("；");
-      if (bankReqs) {
-        performanceBondRequirement += `，出具保函的银行要求：${bankReqs}`;
-      }
-    }
+    const forms = bidderInstructions.performanceBondForms
+      .map((f) => PERFORMANCE_BOND_FORM_LABELS[f])
+      .filter(Boolean)
+      .join("、");
+    const amountPercent =
+      bidderInstructions.performanceBondAmount?.toFixed(2) || "";
+    performanceBondRequirement = `要求，履约保证金的形式：\n1、履约保证金的形式：${forms}\n2、履约保证金的金额：合同总额${amountPercent}%`;
   } else {
     performanceBondRequirement = "不要求";
   }
 
   // ========== 构建不允许负偏离项文本 ==========
   const noNegativeDeviationItems = bidderInstructions.noNegativeDeviationItems
-    .map((item) => NO_NEGATIVE_DEVIATION_LABELS[item] || item)
+    .map((item) => {
+      if (item === "other") {
+        return bidderInstructions.noNegativeDeviationOtherText || "其他";
+      }
+      return NO_NEGATIVE_DEVIATION_LABELS[item] || item;
+    })
     .join("、");
+
+  // ========== 构建投标人要求澄清招标文件文本 ==========
+  const clarificationRequirement = `时间：投标人应于投标截止3日前\n形式：以书面方式，发送至${bidderInstructions.clarificationSendTo || ""}`;
+
+  // ========== 增值税税金的计算方法 ==========
+  const vatCalculationMethod = bidderInstructions.vatCalculationMethod || "";
 
   // ========== 构建最高投标限价文本 ==========
   let maxBidPrice = "";
   if (bidderInstructions.hasMaxBidPrice === true) {
-    maxBidPrice = formatAmount(bidderInstructions.maxBidPrice);
+    maxBidPrice = `有，最高投标限价：${formatAmount(bidderInstructions.maxBidPrice)}元`;
   } else {
     maxBidPrice = "无";
   }
@@ -472,6 +469,12 @@ ${formsList}
       basicInfo.bidDocumentFee != null
         ? basicInfo.bidDocumentFee.toFixed(2)
         : "",
+    bidDocumentFeePaymentType:
+      basicInfo.bidDocumentFeePaymentType === "bank"
+        ? "银行现汇"
+        : basicInfo.bidDocumentFeePaymentType === "cash"
+          ? "现金缴纳"
+          : "",
     contactPerson: basicInfo.contactPerson,
     contactPhone: basicInfo.contactPhone,
     contactEmail: basicInfo.contactEmail,
@@ -500,26 +503,47 @@ ${formsList}
     bidBondRequirement,
     specialQualificationRequirement:
       bidderInstructions.hasSpecialQualificationReq === true
-        ? bidderInstructions.specialQualificationRequirement || "有"
+        ? `有，具体要求：${bidderInstructions.specialQualificationRequirement || ""}`
         : "无",
     financialStatusRequirement,
     recentProjectRequirement,
+    litigationRequirement,
     allowAlternativeBid:
       ALLOW_ALTERNATIVE_BID_LABELS[
         bidderInstructions.allowAlternativeBidProposal
       ],
-    recommendedCandidateCount: (
-      bidderInstructions.recommendedCandidateCount ?? 1
-    ).toString(),
+    paperBidDocumentRequirement,
+    authorizeCommitteeToConfirmWinner:
+      bidderInstructions.authorizeCommitteeToConfirmWinner === "yes"
+        ? "是"
+        : bidderInstructions.authorizeCommitteeToConfirmWinner === "no"
+          ? "否"
+          : "",
     performanceBondRequirement,
+    negativeDeviation:
+      bidderInstructions.negativeDeviationType === "not-allowed"
+        ? "不允许"
+        : bidderInstructions.negativeDeviationType === "allowed"
+          ? `允许（偏差范围：${bidderInstructions.deviationRange || ""}；最高负偏离项数：${bidderInstructions.maxNegativeDeviationCount ?? ""}）`
+          : "",
     noNegativeDeviationItems,
+    clarificationRequirement,
+    vatCalculationMethod,
     maxBidPrice,
+    bidValidity: bidderInstructions.bidValidity?.toString() || "",
     abortBidWhenOverBudget:
       bidderInstructions.abortBidWhenOverBudget === "yes" ? "是" : "否",
-    isSmallMediumEnterprise:
-      IS_SMALL_MEDIUM_ENTERPRISE_LABELS[
-        bidderInstructions.isSmallMediumEnterprise
-      ],
+    returnBidDocuments,
+    useElectronicBidding:
+      bidderInstructions.useElectronicBidding === "yes"
+        ? `是,具体要求：在投标截止时间前，投标人须在五矿集团供应链管理平台”上传按招标文件要求加密的电子投标文件。单个投标文件应小于100M，如果单个投标文件大于100M,须分拆上传。
+备注：
+1、投标人未在五矿集团供应链管理平台成功上传电子投标文件或上传的投标文件有实质性缺失的，其投标将被否决；
+2、不同投标人在五矿集团供应链管理平台上操作时系统抓取到的电脑MAC地址一致的、使用同一台电脑编辑投标文件或上传投标文件的（机器码一致），将视同“串标”，相关投标将被否决，且相关投标人在平台上的账号可能被冻结。
+3、招标人要求同时提供纸质版投标文件的，如内容和电子版不一致时，以电子版为准。`
+        : bidderInstructions.useElectronicBidding === "no"
+          ? "否"
+          : "",
 
     // ============ 综合评分法总分 ============
     commercialScoreTotal: comprehensiveScoring

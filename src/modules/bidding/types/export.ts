@@ -69,6 +69,8 @@ export interface IWordTemplateData {
   qualityIssueNote: string;
   /** 本项目招标文件每套售价（元） */
   bidDocumentFee: string;
+  /** 支付形式 */
+  bidDocumentFeePaymentType: string;
   /** 联系人 */
   contactPerson: string;
   /** 联系电话 */
@@ -97,24 +99,38 @@ export interface IWordTemplateData {
   financialStatusRequirement: string;
   /** 近年完成的类似项目情况要求 */
   recentProjectRequirement: string;
+  /** 近年发生的诉讼及仲裁情况的时间要求 */
+  litigationRequirement: string;
   /** 是否允许递交备选投标方案（"不允许"/"允许"） */
   allowAlternativeBid: string;
-  /** 评标委员会推荐中标候选人的人数 */
-  recommendedCandidateCount: string;
+  /** 纸质投标文件要求 */
+  paperBidDocumentRequirement: string;
+  /** 是否授权评标委员会确定中标人 */
+  authorizeCommitteeToConfirmWinner: string;
   /** 履约保证金要求 */
   performanceBondRequirement: string;
+  /** 负偏差 */
+  negativeDeviation: string;
   /** 投标文件不允许负偏离项（逗号分隔） */
   noNegativeDeviationItems: string;
+  /** 投标人要求澄清招标文件 */
+  clarificationRequirement: string;
+  /** 增值税税金的计算方法 */
+  vatCalculationMethod: string;
   /** 最高投标限价 */
   maxBidPrice: string;
+  /** 投标有效期（天） */
+  bidValidity: string;
   /** 评标汇总排序（根据评标办法生成的排序规则描述） */
   evaluationSummaryRanking: string;
   /** 详细评审（根据评标办法生成的评审内容描述） */
   detailedEvaluation: string;
   /** 中标价高于预算金额时是否废标（"是"/"否"） */
   abortBidWhenOverBudget: string;
-  /** 投标人是否属于中小企业（"是"/"否"） */
-  isSmallMediumEnterprise: string;
+  /** 投标文件是否退还 */
+  returnBidDocuments: string;
+  /** 是否采用电子招标投标 */
+  useElectronicBidding: string;
 
   // ============ 综合评分法总分 ============
   /** 商务评分值（所有商务评分项的分数总和） */
