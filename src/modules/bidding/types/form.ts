@@ -148,9 +148,6 @@ export type NoNegativeDeviationType =
   | "technical-asterisk"
   | "other";
 
-  /** 不允许负偏离项其他内容 */
-  noNegativeDeviationOtherText: string;
-
 /**
  * 评分表项接口
  */

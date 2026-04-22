@@ -13,8 +13,7 @@ export type {
 export type {
   BidMethod,
   ProcurementType,
-  QualificationRequirementType,
-  FinancialRequirementType,
+  QualificationRequirementOption,
   PerformanceRequirementType,
   JointBidType,
   AgentBidType,
@@ -23,7 +22,6 @@ export type {
 } from './form';
 
 export type {
-  FinancialStatusRequirement,
   RecentProjectRequirementType,
   ProofMaterialType,
   ProofMaterialRequirementType,
