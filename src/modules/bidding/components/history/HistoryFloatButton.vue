@@ -1,54 +1,55 @@
 <!--
   @component HistoryFloatButton
-  @description 历史项目悬浮按钮组件，点击打开历史项目抽屉
+  @description 右下角悬浮按钮组，包含历史项目模板和AI填单功能
 -->
 <template>
-  <n-float-button
-    :right="24"
-    :bottom="24"
-    :width="56"
-    :height="56"
-    type="primary"
-    @click="handleClick"
-  >
-    <n-icon size="30">
-      <Library />
-    </n-icon>
-  </n-float-button>
+  <n-float-button-group right="24" bottom="24" position="absolute">
+    <!-- 历史项目按钮 -->
+    <n-float-button
+      tooltip="带入历史项目模板"
+      type="primary"
+      @click="handleHistoryClick"
+    >
+      <n-icon size="24">
+        <Library />
+      </n-icon>
+    </n-float-button>
+
+    <!-- AI填单按钮 -->
+    <n-float-button
+      tooltip="AI智能填单"
+      type="primary"
+      @click="handleAIClick"
+    >
+      <n-icon size="24">
+        <Sparkles />
+      </n-icon>
+    </n-float-button>
+  </n-float-button-group>
 </template>
 
 <script setup lang="ts">
-import { Library } from "@vicons/ionicons5";
-/**
- * 组件 Props
- */
-interface Props {
-  /** 控制抽屉显示状态 */
-  modelValue: boolean;
-}
-
+import { Library, Sparkles } from "@vicons/ionicons5";
 /**
  * 组件 Emits
  */
 interface Emits {
-  /** 更新抽屉显示状态 */
-  (e: "update:modelValue", value: boolean): void;
+  /** 打开历史项目抽屉 */
+  (e: "open-history"): void;
+  /** 打开AI填单 */
+  (e: "open-ai"): void;
 }
 
-defineProps<Props>();
 const emit = defineEmits<Emits>();
 
-/**
- * 处理点击事件
- */
-const handleClick = () => {
-  emit("update:modelValue", true);
+const handleHistoryClick = () => {
+  emit("open-history");
+};
+
+const handleAIClick = () => {
+  emit("open-ai");
 };
 </script>
 
 <style scoped>
-.history-icon {
-  font-size: 24px;
-  line-height: 1;
-}
 </style>

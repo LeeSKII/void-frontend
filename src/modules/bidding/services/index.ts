@@ -33,3 +33,13 @@ export {
   getMockHistoryProjectById,
   getMockHistoryProjectCount,
 } from './mock';
+
+// AI服务
+export {
+  generateBiddingForm,
+  generateBiddingFormPartial,
+  generateBiddingFormByPrompt,
+  type AIGenerateOptions,
+  type AIGenerateResult,
+  type AIPartialGenerateOptions,
+} from './ai';

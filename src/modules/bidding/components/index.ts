@@ -6,3 +6,6 @@
 // 历史相关组件
 export { default as HistoryFloatButton } from './history/HistoryFloatButton.vue';
 export { default as HistoryProjectDrawer } from './history/HistoryProjectDrawer.vue';
+
+// AI相关组件
+export { default as AIFillDialog } from './ai/AIFillDialog.vue';

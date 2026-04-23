@@ -1697,8 +1697,18 @@
       @negative-click="handleDiscardDraft"
     />
 
-    <!-- 历史项目悬浮按钮 -->
-    <HistoryFloatButton v-model="historyDrawerVisible" />
+    <!-- 右下角悬浮按钮组 -->
+    <HistoryFloatButton
+      @open-history="historyDrawerVisible = true"
+      @open-ai="handleAIFill"
+    />
+
+    <!-- AI智能填单对话框 -->
+    <AIFillDialog
+      v-model:visible="aiDialogVisible"
+      :current-form-data="formData"
+      @apply="handleAIApply"
+    />
 
     <!-- 历史项目抽屉 -->
     <HistoryProjectDrawer
@@ -1829,6 +1839,7 @@ import {
   submitBiddingForm,
   AUTO_SAVE_INTERVAL,
   exportWordDocumentWithProgress,
+  generateBiddingForm,
 } from "@/modules/bidding/services";
 import { getTodayTimestamp } from "@/utils/common/date";
 import type {
@@ -1839,6 +1850,7 @@ import type {
 import {
   HistoryFloatButton,
   HistoryProjectDrawer,
+  AIFillDialog,
 } from "@/modules/bidding/components";
 
 /**
@@ -1880,6 +1892,11 @@ const lastSavedTime = ref("");
  * 历史项目抽屉相关
  */
 const historyDrawerVisible = ref(false);
+
+/**
+ * AI填单相关
+ */
+const aiDialogVisible = ref(false);
 
 /**
  * 商务评分表导入模态框相关
@@ -2627,6 +2644,97 @@ const handleCloneProject = (project: IHistoryProject) => {
       saveDraft();
     },
   });
+};
+
+/**
+ * 打开AI填单对话框
+ */
+const handleAIFill = () => {
+  aiDialogVisible.value = true;
+};
+
+/**
+ * 应用AI生成的内容到表单
+ */
+const handleAIApply = (generated: Partial<IBiddingFormData>) => {
+  // 基础信息：合并AI生成的，保留用户填写的项目名称和编号
+  if (generated.basicInfo) {
+    const userFilledProjectName = formData.value.basicInfo.projectName?.trim();
+    const userFilledBidNumber = formData.value.basicInfo.bidNumber?.trim();
+
+    formData.value.basicInfo = {
+      ...formData.value.basicInfo, // 保留原有字段
+      ...generated.basicInfo, // 合并AI生成的
+      // 如果用户之前明确填写过项目名称和编号，才保留
+      projectName: userFilledProjectName || generated.basicInfo.projectName,
+      bidNumber: userFilledBidNumber || generated.basicInfo.bidNumber,
+    };
+  }
+
+  // 投标人须知：只更新AI生成的字段，保留其他
+  if (generated.bidderInstructions) {
+    formData.value.bidderInstructions = {
+      ...formData.value.bidderInstructions, // 保留原有字段
+      ...generated.bidderInstructions, // 合并AI生成的
+    };
+  }
+
+  // 综合评分法：智能合并，确保 items 正确拼接
+  // 兼容AI返回的价格评分表可能在顶层或嵌套在comprehensiveScoring内
+  const priceScoringData = generated.comprehensiveScoring?.priceScoring || generated.priceScoring;
+
+  if (generated.comprehensiveScoring || generated.priceScoring) {
+    // 确保 comprehensiveScoring 存在
+    if (!formData.value.comprehensiveScoring) {
+      formData.value.comprehensiveScoring = {
+        commercialScoring: { items: [] },
+        technicalScoring: { items: [] },
+        priceScoring: { items: [] },
+      };
+    }
+
+    const gen = generated.comprehensiveScoring || {};
+
+    // 合并商务评分表
+    if (gen.commercialScoring?.items?.length) {
+      const existingCommercial = formData.value.comprehensiveScoring.commercialScoring?.items || [];
+      const newItems = gen.commercialScoring.items.map((item, idx) => ({
+        index: Date.now() + idx,
+        itemName: item.itemName || '',
+        score: typeof item.score === 'number' ? item.score : null,
+        scoringStandard: item.scoringStandard || '',
+      }));
+      formData.value.comprehensiveScoring.commercialScoring = { items: [...existingCommercial, ...newItems] };
+    }
+
+    // 合并技术评分表
+    if (gen.technicalScoring?.items?.length) {
+      const existingTechnical = formData.value.comprehensiveScoring.technicalScoring?.items || [];
+      const newItems = gen.technicalScoring.items.map((item, idx) => ({
+        index: Date.now() + idx + 1000,
+        itemName: item.itemName || '',
+        score: typeof item.score === 'number' ? item.score : null,
+        scoringStandard: item.scoringStandard || '',
+      }));
+      formData.value.comprehensiveScoring.technicalScoring = { items: [...existingTechnical, ...newItems] };
+    }
+
+    // 合并价格评分表（兼容两种结构）
+    if (priceScoringData?.items?.length) {
+      const existingPrice = formData.value.comprehensiveScoring.priceScoring?.items || [];
+      const newItems = priceScoringData.items.map((item, idx) => ({
+        index: Date.now() + idx + 2000,
+        itemName: item.itemName || '',
+        score: typeof item.score === 'number' ? item.score : null,
+        scoringStandard: item.scoringStandard || '',
+      }));
+      formData.value.comprehensiveScoring.priceScoring = { items: [...existingPrice, ...newItems] };
+    }
+  }
+
+  currentStep.value = 1;
+  message.success("AI已生成表单内容，请检查并修改");
+  saveDraft();
 };
 
 /**
