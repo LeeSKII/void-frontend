@@ -1774,7 +1774,6 @@ import {
   submitBiddingForm,
   AUTO_SAVE_INTERVAL,
   exportWordDocumentWithProgress,
-  generateBiddingForm,
 } from "@/modules/bidding/services";
 import { getTodayTimestamp } from "@/utils/common/date";
 import type {
@@ -2584,10 +2583,9 @@ const handleAIApply = (generated: Partial<IBiddingFormData>) => {
   }
 
   // 综合评分法：智能合并，确保 items 正确拼接
-  // 兼容AI返回的价格评分表可能在顶层或嵌套在comprehensiveScoring内
-  const priceScoringData = generated.comprehensiveScoring?.priceScoring || generated.priceScoring;
+  const priceScoringData = generated.comprehensiveScoring?.priceScoring;
 
-  if (generated.comprehensiveScoring || generated.priceScoring) {
+  if (generated.comprehensiveScoring) {
     // 确保 comprehensiveScoring 存在
     if (!formData.value.comprehensiveScoring) {
       formData.value.comprehensiveScoring = {

@@ -32,7 +32,6 @@ export type {
   NoNegativeDeviationType,
   IScoringItem,
   IScoringTable,
-  IConformityReviewItem,
   IComprehensiveScoring,
   IBidderInstructions,
   IBiddingFormData,
@@ -47,7 +46,6 @@ export type {
 // 导出类型
 export type {
   IScoringItemData,
-  IConformityReviewItemData,
   IWordTemplateData,
   IExportOptions,
   IExportResult,

@@ -408,8 +408,6 @@ function formatExistingDataForContext(data: Partial<IBiddingFormData>): string {
       lines.push(`- 资金来源: ${bidderInstructions.capitalSourceAndRatio}`);
     }
     if (bidderInstructions.qualityStandard) lines.push(`- 质量标准: ${bidderInstructions.qualityStandard}`);
-    if (bidderInstructions.bidBond) lines.push(`- 投标保证金: ${bidderInstructions.bidBond}`);
-    if (bidderInstructions.paymentMethod) lines.push(`- 付款方式: ${bidderInstructions.paymentMethod}`);
     if (bidderInstructions.preMeetingRequired) {
       lines.push(`- 投标预备会: ${bidderInstructions.preMeetingRequired === 'yes' ? '需要' : '不需要'}`);
     }

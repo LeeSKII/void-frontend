@@ -57,7 +57,7 @@
             </n-switch>
             <n-tag type="info" size="small" v-if="generatedContent.basicInfo">基础信息</n-tag>
             <n-tag type="warning" size="small" v-if="generatedContent.bidderInstructions">投标人须知</n-tag>
-            <n-tag type="success" size="small" v-if="generatedContent.comprehensiveScoring || generatedContent.priceScoring">综合评分</n-tag>
+            <n-tag type="success" size="small" v-if="generatedContent.comprehensiveScoring">综合评分</n-tag>
           </n-space>
         </template>
         <n-spin :show="isGenerating">
@@ -173,18 +173,18 @@ function formatAIResponse(data: Partial<IBiddingFormData>): string {
     if (bi.preMeetingRequired) {
       lines.push(`<p><strong>投标预备会：</strong>${bi.preMeetingRequired === 'yes' ? '需要' : '不需要'}</p>`);
     }
-    if (bi.bidBond) lines.push(`<p><strong>投标保证金：</strong>${String(bi.bidBond)}</p>`);
-    if (bi.performanceBond) lines.push(`<p><strong>履约保证金：</strong>${String(bi.performanceBond)}</p>`);
-    if (bi.paymentMethod) lines.push(`<p><strong>付款方式：</strong>${String(bi.paymentMethod)}</p>`);
-    if (bi.acceptanceStandard) lines.push(`<p><strong>验收标准：</strong>${String(bi.acceptanceStandard)}</p>`);
-    if (bi.technicalDocumentsRequired) lines.push(`<p><strong>技术文件要求：</strong>${String(bi.technicalDocumentsRequired)}</p>`);
+    if (bi.requireBidBond !== null) {
+      lines.push(`<p><strong>投标保证金：</strong>${bi.requireBidBond ? '要求' : '不要求'}</p>`);
+    }
+    if (bi.requirePerformanceBond) {
+      lines.push(`<p><strong>履约保证金：</strong>${bi.requirePerformanceBond === 'required' ? '要求' : '不要求'}</p>`);
+    }
     lines.push('</div>');
   }
 
-  if (data.comprehensiveScoring || data.priceScoring) {
-    // 兼容价格评分表在顶层或嵌套在comprehensiveScoring内
-    const comprehensiveScoring = data.comprehensiveScoring || {};
-    const priceScoringData = comprehensiveScoring.priceScoring || data.priceScoring || {};
+  if (data.comprehensiveScoring) {
+    const comprehensiveScoring = data.comprehensiveScoring;
+    const priceScoringData = comprehensiveScoring.priceScoring || {};
     lines.push('<div class="section"><h4>📊 综合评分法</h4>');
     if (comprehensiveScoring.commercialScoring?.items?.length) {
       const total = comprehensiveScoring.commercialScoring.items.reduce((s, i) => s + (Number(i.score) || 0), 0);
@@ -206,7 +206,7 @@ function formatAIResponse(data: Partial<IBiddingFormData>): string {
 
 // 监听生成内容变化时更新格式化后的内容
 watch(generatedContent, (newVal) => {
-  formattedContent.value = formatAIResponse(newVal);
+  formattedContent.value = formatAIResponse(newVal || {});
 }, { immediate: true });
 
 /**
