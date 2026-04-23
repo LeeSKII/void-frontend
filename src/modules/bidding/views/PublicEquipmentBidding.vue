@@ -2534,8 +2534,7 @@ const handleCloneProject = (project: IHistoryProject) => {
       formData.value = JSON.parse(JSON.stringify(project.formData));
       // 修改项目名称为副本
       formData.value.basicInfo.projectName = `${project.formData.basicInfo.projectName} (副本)`;
-      // 清空招标编号，作为新项目
-      formData.value.basicInfo.bidNumber = "";
+      // 保留原招标编号
       // 重置到第一步
       currentStep.value = 1;
       // 关闭抽屉
