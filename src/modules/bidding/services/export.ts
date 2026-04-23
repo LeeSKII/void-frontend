@@ -14,7 +14,6 @@ import type {
   IExportOptions,
   IExportResult,
   IScoringItemData,
-  IConformityReviewItemData,
 } from "@/modules/bidding/types/export";
 
 /**
@@ -405,22 +404,6 @@ ${formsList}
     }));
   };
 
-  // ========== 转换符合性评审表数据 ==========
-  const transformConformityReviewItems = (
-    items: Array<{
-      index: number;
-      reviewFactor: string;
-      reviewStandard: string;
-    }>,
-  ): IConformityReviewItemData[] => {
-    return items.map((item, idx) => ({
-      index: idx + 1, // 从1开始的序号
-      id: item.index, // 原时间戳作为 id
-      reviewFactor: item.reviewFactor || "",
-      reviewStandard: item.reviewStandard || "",
-    }));
-  };
-
   // ========== 计算评分表总分 ==========
   const calculateScoreTotal = (items: IScoringItemData[]): string => {
     return items
@@ -577,11 +560,6 @@ ${formsList}
       : [],
     priceScoringItems: comprehensiveScoring
       ? transformScoringItems(comprehensiveScoring.priceScoring.items)
-      : [],
-
-    // ============ 符合性评审表-资格评审 ============
-    conformityReviewItems: bidderInstructions.conformityReviewItems
-      ? transformConformityReviewItems(bidderInstructions.conformityReviewItems)
       : [],
   };
 };

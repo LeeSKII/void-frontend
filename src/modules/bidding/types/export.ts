@@ -20,20 +20,6 @@ export interface IScoringItemData {
 }
 
 /**
- * 符合性评审表项数据接口（用于 Word 导出）
- */
-export interface IConformityReviewItemData {
-  /** 序号（从1开始的整数） */
-  index: number;
-  /** 唯一标识（时间戳） */
-  id: number;
-  /** 评审因素 */
-  reviewFactor: string;
-  /** 评审标准 */
-  reviewStandard: string;
-}
-
-/**
  * Word 模板数据接口
  * 用于映射表单数据到 Word 模板变量
  */
@@ -150,9 +136,6 @@ export interface IWordTemplateData {
   /** 价格评分表项列表 */
   priceScoringItems?: IScoringItemData[];
 
-  // ============ 符合性评审表-资格评审 ============
-  /** 符合性评审表项列表 */
-  conformityReviewItems?: IConformityReviewItemData[];
 }
 
 /**

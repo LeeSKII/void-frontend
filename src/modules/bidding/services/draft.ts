@@ -174,7 +174,6 @@ export const createEmptyFormData = (): IBiddingFormData => ({
     abortBidWhenOverBudget: null,
     returnBidDocuments: null,
     returnBidDocumentsDate: null,
-    conformityReviewItems: [],
   },
   comprehensiveScoring: {
     commercialScoring: {

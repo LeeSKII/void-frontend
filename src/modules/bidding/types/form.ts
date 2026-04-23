@@ -171,18 +171,6 @@ export interface IScoringTable {
 }
 
 /**
- * 符合性评审表项接口
- */
-export interface IConformityReviewItem {
-  /** 唯一标识 */
-  index: number;
-  /** 评审因素 */
-  reviewFactor: string;
-  /** 评审标准 */
-  reviewStandard: string;
-}
-
-/**
  * 综合评分法数据接口
  */
 export interface IComprehensiveScoring {
@@ -294,8 +282,6 @@ export interface IBidderInstructions {
   returnBidDocuments: "yes" | "no" | null;
   /** 投标文件退还时间 */
   returnBidDocumentsDate: number | null;
-  /** 符合性评审表-资格评审 */
-  conformityReviewItems: IConformityReviewItem[];
 }
 
 /**

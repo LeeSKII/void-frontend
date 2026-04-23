@@ -106,23 +106,6 @@ const createMockFormDataComprehensive = (baseData: {
     abortBidWhenOverBudget: "yes",
     returnBidDocuments: "no",
     returnBidDocumentsDate: null,
-    conformityReviewItems: [
-      {
-        index: 1,
-        reviewFactor: "营业执照",
-        reviewStandard: "提供有效的营业执照副本",
-      },
-      {
-        index: 2,
-        reviewFactor: "资质证书",
-        reviewStandard: "提供相关资质证书",
-      },
-      {
-        index: 3,
-        reviewFactor: "业绩证明",
-        reviewStandard: "提供近五年类似项目业绩证明材料",
-      },
-    ],
   },
   comprehensiveScoring: {
     commercialScoring: {
@@ -275,10 +258,6 @@ const createMockFormDataLowestPrice = (baseData: {
     abortBidWhenOverBudget: "no",
     returnBidDocuments: "yes",
     returnBidDocumentsDate: baseData.coverDate + 30 * 24 * 60 * 60 * 1000,
-    conformityReviewItems: [
-      { index: 1, reviewFactor: "营业执照", reviewStandard: "有效的营业执照" },
-      { index: 2, reviewFactor: "环保资质", reviewStandard: "ISO14001认证" },
-    ],
   },
   comprehensiveScoring: undefined,
 });
@@ -315,10 +294,10 @@ const createMockFormDataNoBond = (baseData: {
     performanceType: "",
     acceptAgentBid: "accept",
     acceptJointBid: "accept",
-    issueSelectionType: [],
+    issueSelectionType: ["major", "serious"],
     bidDocumentFee: 2000,
     bidDocumentFeePaymentType: "bank",
-    qualityIssueNote: "无质量问题记录",
+    qualityIssueNote: "以招标人或上级单位供应商问题记录库为准",
     contactPerson: "王经理",
     contactPhone: "021-12345678",
     contactEmail: "wang@example.com",
@@ -337,7 +316,7 @@ const createMockFormDataNoBond = (baseData: {
     bidBondForms: [],
     hasSpecialQualificationReq: false,
     specialQualificationRequirement: "",
-    financialReportYears: null,
+    financialReportYears: 3,
     recentProjectRequirementType: "not-applicable",
     recentProjectStartYear: null,
     recentProjectEndYear: null,
@@ -346,8 +325,8 @@ const createMockFormDataNoBond = (baseData: {
     otherProofMaterial: "",
     proofMaterialRequirement: [],
     recentProjectOtherRequirements: "",
-    litigationYears: null,
-    litigationStartDate: null,
+    litigationYears: 3,
+    litigationStartDate: baseData.coverDate - 3 * 365 * 24 * 60 * 60 * 1000,
     allowAlternativeBidProposal: "not-allowed",
     requirePaperBidDocument: true,
     paperBidDocumentCopies: 8,
@@ -371,19 +350,12 @@ const createMockFormDataNoBond = (baseData: {
     noNegativeDeviationOtherText: "",
     clarificationSendTo: "bidding3@example.com",
     vatCalculationMethod: "含税价，税率按国家规定",
-    hasMaxBidPrice: null,
-    maxBidPrice: null,
+    hasMaxBidPrice: true,
+    maxBidPrice: 8000000,
     bidValidity: 180,
     abortBidWhenOverBudget: "yes",
     returnBidDocuments: "yes",
     returnBidDocumentsDate: baseData.coverDate + 60 * 24 * 60 * 60 * 1000,
-    conformityReviewItems: [
-      {
-        index: 1,
-        reviewFactor: "营业执照",
-        reviewStandard: "有效的企业法人营业执照",
-      },
-    ],
   },
   comprehensiveScoring: {
     commercialScoring: {

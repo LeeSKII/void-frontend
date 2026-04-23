@@ -3,7 +3,7 @@
   @description 右下角悬浮按钮组，包含历史项目模板和AI填单功能
 -->
 <template>
-  <n-float-button-group right="24" bottom="24" position="absolute">
+  <n-float-button-group right="24" bottom="24" position="fixed">
     <!-- 历史项目按钮 -->
     <n-float-button
       tooltip="带入历史项目模板"
