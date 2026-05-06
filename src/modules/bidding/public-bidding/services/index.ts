@@ -1,45 +1,11 @@
 /**
- * 招标采购服务统一导出
+ * 招标采购公开招标服务导出
  * @module modules/bidding/public-bidding/services
  */
 
-// API 服务
-export {
-  submitBiddingForm,
-  uploadFile,
-} from './api';
-
-// 草稿管理服务
-export {
-  saveDraftToLocalStorage,
-  loadDraftFromLocalStorage,
-  removeDraftFromLocalStorage,
-  hasDraftInStorage,
-  getDraftSavedTime,
-  createEmptyFormData,
-  AUTO_SAVE_INTERVAL,
-} from './draft';
-
-// 导出服务
+// 导出服务（公开招标专用模板）
 export {
   exportWordDocument,
   exportWordDocumentWithProgress,
   DEFAULT_OUTPUT_PREFIX,
 } from './export';
-
-// 模拟数据服务
-export {
-  getMockHistoryProjects,
-  getMockHistoryProjectById,
-  getMockHistoryProjectCount,
-} from './mock';
-
-// AI服务
-export {
-  generateBiddingForm,
-  generateBiddingFormPartial,
-  generateBiddingFormByPrompt,
-  type AIGenerateOptions,
-  type AIGenerateResult,
-  type AIPartialGenerateOptions,
-} from './ai';

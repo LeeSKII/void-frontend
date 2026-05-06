@@ -1,6 +1,6 @@
 /**
  * API 服务
- * @module modules/bidding/public-bidding/services/api
+ * @module modules/bidding/shared/services/api
  */
 
 import type {

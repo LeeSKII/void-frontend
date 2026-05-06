@@ -1,6 +1,6 @@
 /**
- * 招标采购 Word 导出工具函数
- * @module modules/bidding/public-bidding/services/export
+ * 招标采购 Word 导出工具函数 - 邀请招标专用
+ * @module modules/bidding/invitation-bidding/services/export
  */
 
 import Docxtemplater from "docxtemplater";
@@ -33,7 +33,7 @@ function loadFile(
 /**
  * 默认输出文件名前缀
  */
-export const DEFAULT_OUTPUT_PREFIX = "招标文件_";
+export const DEFAULT_OUTPUT_PREFIX = "邀请招标文件_";
 
 /**
  * 招标主体选项映射（value → label）

@@ -1,17 +1,7 @@
 /**
- * 招标采购工具函数统一导出
+ * 招标采购公开招标工具函数导出
  * @module modules/bidding/public-bidding/utils
  */
 
-// 格式化函数
-export {
-  formatDateToChinese,
-  formatDateTimeToChinese,
-  formatAmount,
-} from './formatters';
-
-// 验证函数
-export {
-  validateBidNumber,
-  getStepName,
-} from './validators';
+// 从 shared 重新导出所有工具函数
+export * from '../../shared/utils';

@@ -30,6 +30,12 @@ const routes: any[] = [
     component: () =>
       import("@/modules/bidding/public-bidding/views/PublicBiddingView.vue"),
   },
+  {
+    path: "/bidding/invitation-bid",
+    props: true,
+    component: () =>
+      import("@/modules/bidding/invitation-bidding/views/InvitationBiddingView.vue"),
+  },
   // 移动端路由配置，包含子路由
   {
     path: "/mobile",

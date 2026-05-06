@@ -1,6 +1,6 @@
 /**
  * 招标采购模拟数据服务
- * @module modules/bidding/public-bidding/services/mock
+ * @module modules/bidding/shared/services/mock
  */
 
 import type {

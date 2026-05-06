@@ -1,6 +1,7 @@
 /**
- * 招标采购常量统一导出
+ * 招标采购公开招标常量导出
  * @module modules/bidding/public-bidding/constants
  */
 
-export * from './mappings';
+// 从 shared 重新导出所有常量
+export * from '../../shared/constants';

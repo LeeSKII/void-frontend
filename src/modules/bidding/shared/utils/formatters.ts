@@ -1,6 +1,6 @@
 /**
  * 格式化工具函数
- * @module modules/bidding/public-bidding/utils/formatters
+ * @module modules/bidding/shared/utils/formatters
  */
 
 /**

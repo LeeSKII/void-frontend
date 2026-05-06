@@ -1,17 +1,17 @@
 <!--
-  @component PublicBiddingView
-  @description 公开招标-标准材料/设备招标采购申请表单页面
+  @component InvitationBiddingView
+  @description 邀请招标-标准材料/设备招标采购申请表单页面
 -->
 <template>
-  <div class="public-bidding">
+  <div class="invitation-bidding">
     <!-- 页面头部 -->
-    <div class="public-bidding__header">
-      <h1 class="public-bidding__title">
-        公开招标-标准材料/设备招标采购申请表
+    <div class="invitation-bidding__header">
+      <h1 class="invitation-bidding__title">
+        邀请招标-标准材料/设备招标采购申请表
       </h1>
 
       <!-- 固定在右上角的操作按钮 -->
-      <div class="public-bidding__fixed-actions">
+      <div class="invitation-bidding__fixed-actions">
         <n-space>
           <n-button type="success" @click="handleSubmit" :loading="submitting">
             提交
@@ -25,7 +25,7 @@
     </div>
 
     <!-- 步骤进度条 -->
-    <n-card class="public-bidding__steps-card">
+    <n-card class="invitation-bidding__steps-card">
       <n-steps :current="currentStep">
         <n-step
           title="基础信息"
@@ -47,7 +47,7 @@
     </n-card>
 
     <!-- 表单内容区域 -->
-    <n-card class="public-bidding__form-card">
+    <n-card class="invitation-bidding__form-card">
       <n-form
         ref="formRef"
         :model="formData"
@@ -56,19 +56,19 @@
         require-mark-placement="right"
       >
         <!-- 步骤一：基础信息 -->
-        <div v-show="currentStep === 1" class="public-bidding__step-content">
+        <div v-show="currentStep === 1" class="invitation-bidding__step-content">
           <BasicInfoStep :form-data="formData" />
         </div>
 
         <!-- 步骤二：投标人须知 -->
-        <div v-show="currentStep === 2" class="public-bidding__step-content">
+        <div v-show="currentStep === 2" class="invitation-bidding__step-content">
           <BidderInstructionsStep :form-data="formData" />
         </div>
 
         <!-- 步骤三：综合评分法 -->
         <div
           v-if="showStep3 && currentStep === 3"
-          class="public-bidding__step-content"
+          class="invitation-bidding__step-content"
         >
           <ScoringStep
             :form-data="formData"
@@ -559,11 +559,11 @@ const handleExportWord = async () => {
 
   exporting.value = true;
   try {
-    // 根据评标办法选择模板
+    // 根据评标办法选择模板（邀请招标模板）
     const templateFileName =
       bidderInstructions.evaluationMethodType === "comprehensive"
-        ? "物资设备类招标文件示范文本-公开招标-综合评分法.docx"
-        : "物资设备类招标文件示范文本-公开招标-最低价中标.docx";
+        ? "物资设备类招标文件示范文本-邀请招标-综合评分法.docx"
+        : "物资设备类招标文件示范文本-邀请招标-经评审的最低价中标法.docx";
 
     const result = await exportWordDocumentWithProgress(
       formData.value,
@@ -572,7 +572,7 @@ const handleExportWord = async () => {
       },
       {
         templatePath: `/void-frontend/v3template/${templateFileName}`,
-        outputFileName: `公开设备招标文件_${basicInfo.bidNumber}`,
+        outputFileName: `邀请招标文件_${basicInfo.bidNumber}`,
       },
     );
 
@@ -1031,21 +1031,21 @@ onBeforeUnmount(() => {
 
 <style scoped>
 /* 容器 */
-.public-bidding {
+.invitation-bidding {
   max-width: 1200px;
   margin: 0 auto;
   padding: 24px;
 }
 
 /* 页面头部 */
-.public-bidding__header {
+.invitation-bidding__header {
   position: relative;
   margin-bottom: 24px;
   padding: 16px 0;
   text-align: center;
 }
 
-.public-bidding__title {
+.invitation-bidding__title {
   margin: 0 0 8px 0;
   font-size: 28px;
   font-weight: 600;
@@ -1053,32 +1053,32 @@ onBeforeUnmount(() => {
 }
 
 /* 步骤卡片 */
-.public-bidding__steps-card {
+.invitation-bidding__steps-card {
   margin-bottom: 24px;
 }
 
 /* 步骤节点可点击样式 */
-.public-bidding__steps-card :deep(.n-step) {
+.invitation-bidding__steps-card :deep(.n-step) {
   cursor: pointer;
 }
 
-.public-bidding__steps-card :deep(.n-step:hover .n-step-indicator) {
+.invitation-bidding__steps-card :deep(.n-step:hover .n-step-indicator) {
   background-color: #e0f0ff;
 }
 
 /* 表单卡片 */
-.public-bidding__form-card {
+.invitation-bidding__form-card {
   min-height: 500px;
   margin-bottom: 24px;
 }
 
 /* 步骤内容区域 */
-.public-bidding__step-content {
+.invitation-bidding__step-content {
   padding: 16px 0;
 }
 
 /* 分节标题 */
-.public-bidding__section-title {
+.invitation-bidding__section-title {
   margin: 24px 0 16px 0;
   padding-bottom: 8px;
   font-size: 16px;
@@ -1087,12 +1087,12 @@ onBeforeUnmount(() => {
   border-bottom: 1px solid #e5e7eb;
 }
 
-.public-bidding__section-title:first-child {
+.invitation-bidding__section-title:first-child {
   margin-top: 0;
 }
 
 /* 子栏目标题（h4，归属于上级栏目） */
-.public-bidding__subsection-title {
+.invitation-bidding__subsection-title {
   margin: 16px 0 12px 0;
   padding-bottom: 6px;
   padding-left: 12px;
@@ -1103,18 +1103,18 @@ onBeforeUnmount(() => {
 }
 
 /* 表单网格布局 */
-.public-bidding__form-grid {
+.invitation-bidding__form-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 16px;
 }
 
-.public-bidding__form-grid__item--full {
+.invitation-bidding__form-grid__item--full {
   grid-column: 1 / -1;
 }
 
 /* 固定在右上角的操作按钮 */
-.public-bidding__fixed-actions {
+.invitation-bidding__fixed-actions {
   position: absolute;
   top: 50%;
   right: 0;
@@ -1122,7 +1122,7 @@ onBeforeUnmount(() => {
   z-index: 10;
 }
 
-.public-bidding__fixed-actions :deep(.n-space) {
+.invitation-bidding__fixed-actions :deep(.n-space) {
   background-color: rgba(255, 255, 255, 0.95);
   padding: 8px 16px;
   border-radius: 8px;
@@ -1130,21 +1130,21 @@ onBeforeUnmount(() => {
   transition: box-shadow 0.3s ease;
 }
 
-.public-bidding__fixed-actions :deep(.n-space:hover) {
+.invitation-bidding__fixed-actions :deep(.n-space:hover) {
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
 }
 
 /* 响应式设计 */
 @media (max-width: 768px) {
-  .public-bidding {
+  .invitation-bidding {
     padding: 16px;
   }
 
-  .public-bidding__title {
+  .invitation-bidding__title {
     font-size: 20px;
   }
 
-  .public-bidding__form-grid {
+  .invitation-bidding__form-grid {
     grid-template-columns: 1fr;
   }
 }

@@ -1,6 +1,6 @@
 /**
  * 招标采购通用类型定义
- * @module modules/bidding/public-bidding/types/common
+ * @module modules/bidding/shared/types/common
  */
 
 /**

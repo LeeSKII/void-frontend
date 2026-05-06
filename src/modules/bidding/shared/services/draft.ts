@@ -1,6 +1,6 @@
 /**
  * 草稿管理服务
- * @module modules/bidding/public-bidding/services/draft
+ * @module modules/bidding/shared/services/draft
  */
 
 import type {

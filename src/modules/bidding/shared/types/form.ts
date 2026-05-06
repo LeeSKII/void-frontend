@@ -1,7 +1,9 @@
 /**
  * 招标采购表单相关类型定义
- * @module modules/bidding/public-bidding/types/form
+ * @module modules/bidding/shared/types/form
  */
+
+import type { IApiResponse } from "./common";
 
 /**
  * 招标方式枚举
@@ -297,18 +299,6 @@ export interface IBiddingFormData {
 }
 
 /**
- * 下拉选项接口
- */
-export interface ISelectOption {
-  /** 选项值 */
-  value: string | number;
-  /** 选项标签 */
-  label: string;
-  /** 是否禁用 */
-  disabled?: boolean;
-}
-
-/**
  * 草稿数据接口
  */
 export interface IDraftData {
@@ -318,18 +308,6 @@ export interface IDraftData {
   currentStep: number;
   /** 保存时间 */
   savedAt: string;
-}
-
-/**
- * API 响应接口
- */
-export interface IApiResponse<T = any> {
-  /** 响应码 */
-  code: number;
-  /** 响应消息 */
-  message: string;
-  /** 响应数据 */
-  data?: T;
 }
 
 /**

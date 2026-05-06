@@ -1,6 +1,6 @@
 /**
  * Word 导出功能相关类型定义
- * @module modules/bidding/public-bidding/types/export
+ * @module modules/bidding/shared/types/export
  */
 
 /**
@@ -135,7 +135,6 @@ export interface IWordTemplateData {
   technicalScoringItems?: IScoringItemData[];
   /** 价格评分表项列表 */
   priceScoringItems?: IScoringItemData[];
-
 }
 
 /**
