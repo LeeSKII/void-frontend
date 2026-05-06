@@ -1,6 +1,6 @@
 /**
  * 枚举值中文映射常量
- * @module modules/bidding/constants/mappings
+ * @module modules/bidding/public-bidding/constants/mappings
  */
 
 /**

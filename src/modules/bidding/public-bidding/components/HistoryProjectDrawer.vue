@@ -112,8 +112,8 @@
 
 <script setup lang="ts">
 import { ref, computed, watch } from "vue";
-import { getMockHistoryProjects } from "@/modules/bidding/services";
-import type { IHistoryProject, ISelectOption } from "@/modules/bidding/types";
+import { getMockHistoryProjects } from "../services/mock";
+import type { IHistoryProject, ISelectOption } from "../types";
 
 /**
  * 组件 Props

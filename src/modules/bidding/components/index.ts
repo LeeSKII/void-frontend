@@ -3,9 +3,5 @@
  * @module modules/bidding/components
  */
 
-// 历史相关组件
-export { default as HistoryFloatButton } from './history/HistoryFloatButton.vue';
-export { default as HistoryProjectDrawer } from './history/HistoryProjectDrawer.vue';
-
-// AI相关组件
-export { default as AIFillDialog } from './ai/AIFillDialog.vue';
+// 重新导出自 public-bidding
+export * from '../public-bidding/components';

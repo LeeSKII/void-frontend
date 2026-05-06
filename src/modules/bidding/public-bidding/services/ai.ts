@@ -1,6 +1,6 @@
 /**
  * AI服务 - 调用OpenAI生成招标表单内容
- * @module modules/bidding/services/ai
+ * @module modules/bidding/public-bidding/services/ai
  */
 
 import OpenAI from 'openai';

@@ -1,6 +1,6 @@
 /**
  * 验证工具函数
- * @module modules/bidding/utils/validators
+ * @module modules/bidding/public-bidding/utils/validators
  */
 
 /**

@@ -1,6 +1,6 @@
 /**
  * 招标采购表单相关类型定义
- * @module types/bidding
+ * @module modules/bidding/public-bidding/types/form
  */
 
 /**

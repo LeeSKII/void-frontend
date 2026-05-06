@@ -90,8 +90,8 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue';
 import { Sparkles } from '@vicons/ionicons5';
-import { generateBiddingFormByPrompt } from '../../services/ai';
-import type { IBiddingFormData } from '../../types/form';
+import { generateBiddingFormByPrompt } from '../services/ai';
+import type { IBiddingFormData } from '../types/form';
 
 interface Emits {
   (e: 'apply', data: Partial<IBiddingFormData>): void;

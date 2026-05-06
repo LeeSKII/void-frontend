@@ -1,12 +1,12 @@
 /**
  * 草稿管理服务
- * @module modules/bidding/services/draft
+ * @module modules/bidding/public-bidding/services/draft
  */
 
 import type {
   IBiddingFormData,
   IDraftData,
-} from '@/modules/bidding/types';
+} from '../types';
 
 /**
  * 本地存储键名

@@ -1,13 +1,13 @@
 /**
  * 招标采购模拟数据服务
- * @module modules/bidding/services/mock
+ * @module modules/bidding/public-bidding/services/mock
  */
 
 import type {
   IBiddingFormData,
   IHistoryProject,
   HistoryProjectSortType,
-} from "@/modules/bidding/types";
+} from "../types";
 
 /**
  * 生成模拟的完整表单数据（综合评分法版本）

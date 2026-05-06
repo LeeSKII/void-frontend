@@ -1,13 +1,13 @@
 /**
  * API 服务
- * @module modules/bidding/services/api
+ * @module modules/bidding/public-bidding/services/api
  */
 
 import type {
   IBiddingFormData,
   ISubmitResponse,
   IUploadResponse,
-} from '@/modules/bidding/types';
+} from '../types';
 
 /**
  * 提交招标表单到后端

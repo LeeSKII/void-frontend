@@ -1,6 +1,6 @@
 /**
  * Word 导出功能相关类型定义
- * @module types/bidding-export
+ * @module modules/bidding/public-bidding/types/export
  */
 
 /**

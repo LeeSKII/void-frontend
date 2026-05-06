@@ -1,6 +1,6 @@
 /**
  * 招标采购 Word 导出工具函数
- * @module modules/bidding/services/export
+ * @module modules/bidding/public-bidding/services/export
  */
 
 import Docxtemplater from "docxtemplater";
@@ -8,13 +8,13 @@ import PizZip from "pizzip";
 import PizZipUtils from "pizzip/utils/index.js";
 import { saveAs } from "file-saver";
 import ImageModule from "docxtemplater-image-module-free";
-import type { IBiddingFormData } from "@/modules/bidding/types/form";
+import type { IBiddingFormData } from "../types/form";
 import type {
   IWordTemplateData,
   IExportOptions,
   IExportResult,
   IScoringItemData,
-} from "@/modules/bidding/types/export";
+} from "../types/export";
 
 /**
  * 加载本地二进制文件
@@ -263,8 +263,8 @@ ${formsList}
 3、接收投标保证金的账户信息：
 名称：中冶长天国际工程有限责任公司        开户行及帐号：交通银行湖南省分行营业部431612000018000173895
 4、投标保证金的递交：
-以电汇或现金转账形式提交的投标保证金应从投标人基本帐户转出，在开标截止日前汇至以上帐户（请注明XX项目投标保证金），并在投标文件中提交汇款凭证及基本存款账户银行出具的“开户许可证”或基本账户相关证明资料；
-采用银行保函形式提交的，应提供由在中华人民共和国境内银行总行、分行或其支行出具（银行保函的格式要求详见本招标文件“第六章投标文件格式”中的要求）,保函有效期应当与投标有效期一致；在投标文件中应包含银行保函原件的扫描件，同时投标人应在投标文件递交截止时间前将银行保函原件邮寄或现场提交至招标人。
+以电汇或现金转账形式提交的投标保证金应从投标人基本帐户转出，在开标截止日前汇至以上帐户（请注明XX项目投标保证金），并在投标文件中提交汇款凭证及基本存款账户银行出具的"开户许可证"或基本账户相关证明资料；
+采用银行保函形式提交的，应提供由在中华人民共和国境内银行总行、分行或其支行出具（银行保函的格式要求详见本招标文件"第六章投标文件格式"中的要求）,保函有效期应当与投标有效期一致；在投标文件中应包含银行保函原件的扫描件，同时投标人应在投标文件递交截止时间前将银行保函原件邮寄或现场提交至招标人。
 以其他形式递交投标保证金的，需在取得招标人认可后，按招标人的具体要求提供，否则其投标将被否决。`;
   } else if (bidderInstructions.requireBidBond === false) {
     bidBondRequirement = "不要求";
@@ -429,7 +429,7 @@ ${formsList}
       basicInfo.acceptAgentBid === "accept"
         ? `接受，应满足下列要求：
 一个制造商对同一品牌同一型号的材设备，仅能委托一个代理商参加投标（仅针对设备招标）；
-投标人为代理经销商的，对投标人的资质要求包含对制造商的资质要求，对投标人的业绩要求包含对投标设备材料的业绩要求。`
+投标人为代理经销商的，对投标人的资质要求包含对制造商的资质要求，对投标人的业绩要求包含对投标设备的业绩要求。`
         : basicInfo.acceptAgentBid === "reject"
           ? "不接受"
           : "",
@@ -525,10 +525,10 @@ ${formsList}
     returnBidDocuments,
     useElectronicBidding:
       bidderInstructions.useElectronicBidding === "yes"
-        ? `是,具体要求：在投标截止时间前，投标人须在五矿集团供应链管理平台”上传按招标文件要求加密的电子投标文件。单个投标文件应小于100M，如果单个投标文件大于100M,须分拆上传。
+        ? `是,具体要求：在投标截止时间前，投标人须在五矿集团供应链管理平台"上传按招标文件要求加密的电子投标文件。单个投标文件应小于100M，如果单个投标文件大于100M,须分拆上传。
 备注：
 1、投标人未在五矿集团供应链管理平台成功上传电子投标文件或上传的投标文件有实质性缺失的，其投标将被否决；
-2、不同投标人在五矿集团供应链管理平台上操作时系统抓取到的电脑MAC地址一致的、使用同一台电脑编辑投标文件或上传投标文件的（机器码一致），将视同“串标”，相关投标将被否决，且相关投标人在平台上的账号可能被冻结。
+2、不同投标人在五矿集团供应链管理平台上操作时系统抓取到的电脑MAC地址一致的、使用同一台电脑编辑投标文件或上传投标文件的（机器码一致），将视同"串标"，相关投标将被否决，且相关投标人在平台上的账号可能被冻结。
 3、招标人要求同时提供纸质版投标文件的，如内容和电子版不一致时，以电子版为准。`
         : bidderInstructions.useElectronicBidding === "no"
           ? "否"

@@ -3,15 +3,5 @@
  * @module modules/bidding/utils
  */
 
-// 格式化函数
-export {
-  formatDateToChinese,
-  formatDateTimeToChinese,
-  formatAmount,
-} from './formatters';
-
-// 验证函数
-export {
-  validateBidNumber,
-  getStepName,
-} from './validators';
+// 重新导出自 public-bidding
+export * from '../public-bidding/utils';
