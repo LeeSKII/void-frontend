@@ -1,5 +1,5 @@
 <template>
-  <div>PC home page</div>
+  <div>PC home page - test only</div>
 </template>
 
 <script setup lang="ts">

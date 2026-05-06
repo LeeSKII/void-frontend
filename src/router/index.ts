@@ -36,6 +36,35 @@ const routes: any[] = [
     component: () =>
       import("@/modules/bidding/invitation-bidding/views/InvitationBiddingView.vue"),
   },
+  {
+    path: "/bidding/service-bid",
+    props: true,
+    component: () =>
+      import("@/modules/bidding/service-bidding/views/ServiceBiddingView.vue"),
+  },
+  {
+    path: "/bidding/construction-bid",
+    props: true,
+    component: () =>
+      import("@/modules/bidding/construction-bidding/views/ConstructionBiddingView.vue"),
+  },
+  {
+    path: "/bidding/negotiation-bid",
+    props: true,
+    component: () =>
+      import("@/modules/bidding/negotiation-bidding/views/NegotiationBiddingView.vue"),
+  },
+  {
+    path: "/bidding/inquiry-bid",
+    props: true,
+    component: () =>
+      import("@/modules/bidding/inquiry-procurement/views/InquiryBiddingView.vue"),
+  },
+  // 招标采购导航页
+  {
+    path: "/bidding",
+    component: () => import("@/views/pages/BiddingHomePage.vue"),
+  },
   // 移动端路由配置，包含子路由
   {
     path: "/mobile",
