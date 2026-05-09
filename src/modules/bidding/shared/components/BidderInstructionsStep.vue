@@ -132,6 +132,7 @@
         <n-radio-group
           v-model:value="formData.bidderInstructions.negativeDeviationType"
           name="negativeDeviationType"
+          disabled
         >
           <n-radio value="not-allowed">不允许</n-radio>
           <n-radio value="allowed"
@@ -153,6 +154,7 @@
           <n-input
             v-model:value="formData.bidderInstructions.deviationRange"
             placeholder="请输入偏差范围"
+            disabled
           />
         </n-form-item>
         <n-form-item
@@ -811,7 +813,8 @@
 </template>
 
 <script setup lang="ts">
-import type { IBiddingFormData } from "../types";
+import { watch } from "vue";
+import type { IBiddingFormData, NoNegativeDeviationType } from "../types";
 
 /**
  * Props
@@ -821,7 +824,95 @@ interface Props {
   formData: IBiddingFormData;
 }
 
-defineProps<Props>();
+const props = defineProps<Props>();
+
+/**
+ * 不允许负偏离项标签映射
+ */
+const NO_NEGATIVE_DEVIATION_LABELS: Record<NoNegativeDeviationType, string> = {
+  "payment-terms": "付款条件",
+  "delivery-date": "交货期",
+  "delivery-location": "交货地点",
+  "external-brand": "招标文件中约定的外购件品牌",
+  "supply-scope": "供货范围",
+  "bid-validity": "投标有效期",
+  "quality-warranty": "质保期",
+  "equipment-specs": "设备规格型号及主要参数",
+  "technical-asterisk": "实质性要求和条件（见1.10.1）",
+  "other": "其他"
+};
+
+/**
+ * 不包含 "other" 的所有负偏离项
+ */
+const ALL_DEVIATION_ITEMS: NoNegativeDeviationType[] = [
+  "payment-terms",
+  "delivery-date",
+  "delivery-location",
+  "external-brand",
+  "supply-scope",
+  "bid-validity",
+  "quality-warranty",
+  "equipment-specs",
+  "technical-asterisk"
+];
+
+/**
+ * 监听负偏差类型变化：当切换为"不允许"时，自动勾选所有非"其他"选项
+ */
+watch(
+  () => props.formData.bidderInstructions.negativeDeviationType,
+  (newVal) => {
+    if (newVal === "not-allowed") {
+      props.formData.bidderInstructions.noNegativeDeviationItems = [
+        ...ALL_DEVIATION_ITEMS
+      ];
+    }
+  }
+);
+
+/**
+ * 监听不允许负偏离项变化：当取消勾选非"其他"选项时，
+ * 自动切换为"允许"模式，并更新偏差范围和最高负偏离项数
+ */
+watch(
+  () => props.formData.bidderInstructions.noNegativeDeviationItems,
+  (newItems) => {
+    const bi = props.formData.bidderInstructions;
+    const uncheckedItems = ALL_DEVIATION_ITEMS.filter(
+      (item) => !newItems.includes(item)
+    );
+    if (uncheckedItems.length > 0) {
+      // 有未勾选项：切换为允许模式，更新偏差范围
+      bi.negativeDeviationType = "allowed";
+      bi.deviationRange = uncheckedItems
+        .map((item) => NO_NEGATIVE_DEVIATION_LABELS[item])
+        .join("，");
+      bi.maxNegativeDeviationCount = uncheckedItems.length;
+    } else {
+      // 所有非"其他"项都已勾选：切换为不允许模式，清空偏差范围
+      bi.negativeDeviationType = "not-allowed";
+      bi.deviationRange = "";
+      bi.maxNegativeDeviationCount = 0;
+    }
+  }
+);
+
+/**
+ * 监听偏差范围变化：确保最高负偏离项数不超过偏差范围选项数
+ */
+watch(
+  () => props.formData.bidderInstructions.deviationRange,
+  (newRange) => {
+    const bi = props.formData.bidderInstructions;
+    if (newRange && bi.maxNegativeDeviationCount !== null) {
+      const rangeCount = newRange.split("，").filter(Boolean).length;
+      if (bi.maxNegativeDeviationCount > rangeCount) {
+        bi.maxNegativeDeviationCount = rangeCount;
+      }
+    }
+  }
+);
 </script>
 
 <style scoped>
