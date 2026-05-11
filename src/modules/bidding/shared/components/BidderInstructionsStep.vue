@@ -132,7 +132,6 @@
         <n-radio-group
           v-model:value="formData.bidderInstructions.negativeDeviationType"
           name="negativeDeviationType"
-          disabled
         >
           <n-radio value="not-allowed">不允许</n-radio>
           <n-radio value="allowed"
@@ -154,7 +153,6 @@
           <n-input
             v-model:value="formData.bidderInstructions.deviationRange"
             placeholder="请输入偏差范围"
-            disabled
           />
         </n-form-item>
         <n-form-item
