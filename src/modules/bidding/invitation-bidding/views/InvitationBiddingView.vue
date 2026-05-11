@@ -1,13 +1,13 @@
 <!--
   @component InvitationBiddingView
-  @description 邀请招标-标准材料/设备招标采购申请表单页面
+  @description 邀请招标-物资设备标准招标文件表单页面
 -->
 <template>
   <div class="invitation-bidding">
     <!-- 页面头部 -->
     <div class="invitation-bidding__header">
       <h1 class="invitation-bidding__title">
-        邀请招标-标准材料/设备招标采购申请表
+        邀请招标-物资设备标准招标文件
       </h1>
 
       <!-- 固定在右上角的操作按钮 -->
