@@ -18,6 +18,10 @@ export {
   getDraftSavedTime,
   createEmptyFormData,
   AUTO_SAVE_INTERVAL,
+  saveProjectToLocalStorage,
+  loadSavedProjectsFromLocalStorage,
+  clearSavedProjectsFromLocalStorage,
+  deleteSavedProjectByBidNumber,
 } from './draft';
 
 // 模拟数据服务

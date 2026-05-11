@@ -36,7 +36,7 @@
 
       <!-- 项目列表 -->
       <div class="history-drawer__list">
-        <n-list hoverable clickable bordered>
+        <n-list hoverable clickable bordered :key="reloadKey">
           <n-list-item
             v-for="project in filteredProjects"
             :key="project.id"
@@ -67,13 +67,21 @@
 
               <!-- 标签 -->
               <template #action>
-                <n-space :size="8">
+                <n-space :size="8" align="center">
                   <n-tag size="small" :bordered="false">
                     {{ getBidSubjectLabel(project.bidSubject) }}
                   </n-tag>
                   <n-tag size="small" type="info" :bordered="false">
                     {{ formatDate(project.coverDate) }}
                   </n-tag>
+                  <n-icon
+                    class="history-drawer__delete-btn"
+                    size="16"
+                    color="#eb4c4c"
+                    @click="handleDeleteProject(project, $event)"
+                  >
+                    <TrashOutline />
+                  </n-icon>
                 </n-space>
               </template>
             </n-thing>
@@ -111,8 +119,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from "vue";
+import { ref, computed, watch, onMounted } from "vue";
+import { useMessage } from "naive-ui";
+import { TrashOutline } from "@vicons/ionicons5";
 import { getMockHistoryProjects } from "../services/mock";
+import { deleteSavedProjectByBidNumber } from "../services/draft";
 import type { IHistoryProject, ISelectOption } from "../types";
 
 /**
@@ -135,6 +146,7 @@ interface Emits {
 
 const props = defineProps<Props>();
 const emit = defineEmits<Emits>();
+const message = useMessage();
 
 /**
  * 内部可见状态
@@ -177,6 +189,7 @@ const bidSubjectOptions: ISelectOption[] = [
  * 过滤后的项目列表
  */
 const filteredProjects = ref<IHistoryProject[]>([]);
+const reloadKey = ref(0);
 
 /**
  * 获取招标主体标签
@@ -203,11 +216,16 @@ const formatDate = (timestamp: number | null): string => {
  * 加载项目列表
  */
 const loadProjects = () => {
-  filteredProjects.value = getMockHistoryProjects(
-    searchKeyword.value,
-    sortBy.value,
-  );
+  filteredProjects.value = getMockHistoryProjects(searchKeyword.value, sortBy.value);
+  reloadKey.value++;
 };
+
+/**
+ * 组件挂载时自动加载项目
+ */
+onMounted(() => {
+  loadProjects();
+});
 
 /**
  * 处理搜索
@@ -221,6 +239,16 @@ const handleSearch = () => {
  */
 const handleSortChange = () => {
   loadProjects();
+};
+
+/**
+ * 删除项目
+ */
+const handleDeleteProject = (project: IHistoryProject, event: MouseEvent) => {
+  event.stopPropagation();
+  deleteSavedProjectByBidNumber(project.bidNumber);
+  loadProjects();
+  message.success("项目已删除");
 };
 
 /**
@@ -300,5 +328,16 @@ watch(
 
 :deep(.n-thing-main__description) {
   margin-top: 8px;
+}
+
+.history-drawer__delete-btn {
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+  margin-left: 4px;
+}
+
+.history-drawer__delete-btn:hover {
+  opacity: 1;
 }
 </style>

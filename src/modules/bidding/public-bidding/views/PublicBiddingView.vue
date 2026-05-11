@@ -1,20 +1,20 @@
 <!--
   @component PublicBiddingView
-  @description 公开招标-标准材料/设备招标采购申请表单页面
+  @description 公开招标-物资设备标准招标文件表单页面
 -->
 <template>
   <div class="public-bidding">
     <!-- 页面头部 -->
     <div class="public-bidding__header">
       <h1 class="public-bidding__title">
-        公开招标-标准材料/设备招标采购申请表
+        公开招标-物资设备标准招标文件
       </h1>
 
       <!-- 固定在右上角的操作按钮 -->
       <div class="public-bidding__fixed-actions">
         <n-space>
           <n-button type="success" @click="handleSubmit" :loading="submitting">
-            提交
+            保存
           </n-button>
           <n-button type="info" @click="handleExportWord" :loading="exporting">
             导出Word
@@ -228,7 +228,7 @@ import {
   removeDraftFromLocalStorage,
   hasDraftInStorage,
   getDraftSavedTime,
-  submitBiddingForm,
+  saveProjectToLocalStorage,
   AUTO_SAVE_INTERVAL,
 } from "../../shared/services";
 import { exportWordDocumentWithProgress } from "../services/export";
@@ -524,7 +524,7 @@ const handleReset = () => {
 };
 
 /**
- * 提交表单
+ * 保存表单
  */
 const handleSubmit = async () => {
   try {
@@ -536,11 +536,9 @@ const handleSubmit = async () => {
 
   submitting.value = true;
   try {
-    await submitBiddingForm(formData.value);
-    message.success("提交成功");
-    removeDraftFromLocalStorage();
-  } catch (error) {
-    message.error("提交失败，请重试");
+    saveProjectToLocalStorage(formData.value);
+    saveDraftToLocalStorage(formData.value, currentStep.value);
+    message.success("保存成功");
   } finally {
     submitting.value = false;
   }

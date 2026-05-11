@@ -6,6 +6,7 @@
 import type {
   IBiddingFormData,
   IDraftData,
+  IHistoryProject,
 } from '../types';
 
 /**
@@ -97,6 +98,103 @@ export const getDraftSavedTime = (): string => {
  * 创建空白的表单数据
  * @returns 空白的表单数据对象
  */
+
+/**
+ * 已保存项目列表存储键名
+ */
+const SAVED_PROJECTS_KEY = "bidding_saved_projects";
+
+/**
+ * 将当前表单保存为项目到 localStorage
+ * 以招标编号为唯一键，同编号的项目会覆盖
+ * @param formData 用户填写的完整表单数据
+ * @returns 保存是否成功
+ */
+export const saveProjectToLocalStorage = (
+  formData: IBiddingFormData,
+): boolean => {
+  try {
+    const bidNumber = formData.basicInfo.bidNumber;
+    if (!bidNumber) {
+      console.error("保存项目失败: 招标编号不能为空");
+      return false;
+    }
+
+    // 读取现有项目列表
+    const existingData = localStorage.getItem(SAVED_PROJECTS_KEY);
+    const projectsMap: Record<string, IHistoryProject> = existingData
+      ? JSON.parse(existingData)
+      : {};
+
+    // 以招标编号为键，覆盖或新增
+    projectsMap[bidNumber] = {
+      id: bidNumber,
+      bidSubject: formData.basicInfo.bidSubject,
+      projectName: formData.basicInfo.projectName,
+      bidNumber: bidNumber,
+      coverDate: formData.basicInfo.coverDate,
+      equipmentName: formData.basicInfo.equipmentName,
+      createdAt: Date.now(),
+      formData: JSON.parse(JSON.stringify(formData)),
+    };
+
+    localStorage.setItem(SAVED_PROJECTS_KEY, JSON.stringify(projectsMap));
+    return true;
+  } catch (error) {
+    console.error("保存项目失败:", error);
+    return false;
+  }
+};
+
+/**
+ * 从 localStorage 加载已保存的项目列表
+ * @returns 已保存的项目列表
+ */
+export const loadSavedProjectsFromLocalStorage = (): IHistoryProject[] => {
+  try {
+    const data = localStorage.getItem(SAVED_PROJECTS_KEY);
+    if (!data) return [];
+    const projectsMap: Record<string, IHistoryProject> = JSON.parse(data);
+    return Object.values(projectsMap);
+  } catch (error) {
+    console.error("加载保存的项目列表失败:", error);
+    return [];
+  }
+};
+
+/**
+ * 清除 localStorage 中的已保存项目列表
+ * @returns 清除是否成功
+ */
+export const clearSavedProjectsFromLocalStorage = (): boolean => {
+  try {
+    localStorage.removeItem(SAVED_PROJECTS_KEY);
+    return true;
+  } catch (error) {
+    console.error("清除保存的项目列表失败:", error);
+    return false;
+  }
+};
+
+/**
+ * 根据招标编号删除已保存的项目
+ * @param bidNumber 招标编号
+ * @returns 删除是否成功
+ */
+export const deleteSavedProjectByBidNumber = (bidNumber: string): boolean => {
+  try {
+    const data = localStorage.getItem(SAVED_PROJECTS_KEY);
+    if (!data) return true;
+    const projectsMap: Record<string, IHistoryProject> = JSON.parse(data);
+    delete projectsMap[bidNumber];
+    localStorage.setItem(SAVED_PROJECTS_KEY, JSON.stringify(projectsMap));
+    return true;
+  } catch (error) {
+    console.error("删除保存的项目失败:", error);
+    return false;
+  }
+};
+
 export const createEmptyFormData = (): IBiddingFormData => ({
   basicInfo: {
     bidSubject: "",
